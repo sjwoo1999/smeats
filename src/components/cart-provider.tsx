@@ -13,7 +13,7 @@ import type { CartItem } from "@/lib/types";
 type CartContextType = {
   items: CartItem[];
   add: (item: Omit<CartItem, "quantity"> & { quantity?: number }) => void;
-  addMany: (items: Omit<CartItem, "quantity"> & { quantity?: number }[]) => void;
+  addMany: (items: (Omit<CartItem, "quantity"> & { quantity?: number })[]) => void;
   setQuantity: (productId: string, quantity: number) => void;
   remove: (productId: string) => void;
   clear: () => void;

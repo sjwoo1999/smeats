@@ -193,7 +193,8 @@ export async function getOrders(
     }
 
     // Transform to OrderWithDetails type
-    return orders.map((o): OrderWithDetails => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (orders as any[]).map((o): OrderWithDetails => ({
       id: o.id,
       customer_id: o.customer_id,
       seller_id: o.seller_id,
@@ -206,24 +207,24 @@ export async function getOrders(
       customer: {
         email: Array.isArray(o.customer)
           ? o.customer[0]?.email || ""
-          : (o.customer as any)?.email || "",
+          : (o.customer as { email?: string })?.email || "",
         business_name: Array.isArray(o.customer)
           ? o.customer[0]?.business_name || null
-          : (o.customer as any)?.business_name || null,
+          : (o.customer as { business_name?: string | null })?.business_name || null,
         contact_phone: Array.isArray(o.customer)
           ? o.customer[0]?.contact_phone || null
-          : (o.customer as any)?.contact_phone || null,
+          : (o.customer as { contact_phone?: string | null })?.contact_phone || null,
       },
       seller: {
         business_name: Array.isArray(o.seller)
           ? o.seller[0]?.business_name || null
-          : (o.seller as any)?.business_name || null,
+          : (o.seller as { business_name?: string | null })?.business_name || null,
         contact_phone: Array.isArray(o.seller)
           ? o.seller[0]?.contact_phone || null
-          : (o.seller as any)?.contact_phone || null,
+          : (o.seller as { contact_phone?: string | null })?.contact_phone || null,
       },
       items: Array.isArray(o.items)
-        ? o.items.map((item: any) => ({
+        ? o.items.map((item: { id: string; product_id: string; quantity: number; price_at_order: number; product?: { name?: string; unit?: string; image_path?: string | null } }) => ({
             id: item.id,
             product_id: item.product_id,
             quantity: item.quantity,
@@ -300,37 +301,40 @@ export async function getOrderDetails(
       return null;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const orderData = order as any;
+
     return {
-      id: order.id,
-      customer_id: order.customer_id,
-      seller_id: order.seller_id,
-      status: order.status as OrderStatus,
-      total_amount: order.total_amount,
-      delivery_address: order.delivery_address,
-      delivery_note: order.delivery_note,
-      created_at: order.created_at,
-      updated_at: order.updated_at,
+      id: orderData.id,
+      customer_id: orderData.customer_id,
+      seller_id: orderData.seller_id,
+      status: orderData.status as OrderStatus,
+      total_amount: orderData.total_amount,
+      delivery_address: orderData.delivery_address,
+      delivery_note: orderData.delivery_note,
+      created_at: orderData.created_at,
+      updated_at: orderData.updated_at,
       customer: {
-        email: Array.isArray(order.customer)
-          ? order.customer[0]?.email || ""
-          : (order.customer as any)?.email || "",
-        business_name: Array.isArray(order.customer)
-          ? order.customer[0]?.business_name || null
-          : (order.customer as any)?.business_name || null,
-        contact_phone: Array.isArray(order.customer)
-          ? order.customer[0]?.contact_phone || null
-          : (order.customer as any)?.contact_phone || null,
+        email: Array.isArray(orderData.customer)
+          ? orderData.customer[0]?.email || ""
+          : (orderData.customer as { email?: string })?.email || "",
+        business_name: Array.isArray(orderData.customer)
+          ? orderData.customer[0]?.business_name || null
+          : (orderData.customer as { business_name?: string | null })?.business_name || null,
+        contact_phone: Array.isArray(orderData.customer)
+          ? orderData.customer[0]?.contact_phone || null
+          : (orderData.customer as { contact_phone?: string | null })?.contact_phone || null,
       },
       seller: {
-        business_name: Array.isArray(order.seller)
-          ? order.seller[0]?.business_name || null
-          : (order.seller as any)?.business_name || null,
-        contact_phone: Array.isArray(order.seller)
-          ? order.seller[0]?.contact_phone || null
-          : (order.seller as any)?.contact_phone || null,
+        business_name: Array.isArray(orderData.seller)
+          ? orderData.seller[0]?.business_name || null
+          : (orderData.seller as { business_name?: string | null })?.business_name || null,
+        contact_phone: Array.isArray(orderData.seller)
+          ? orderData.seller[0]?.contact_phone || null
+          : (orderData.seller as { contact_phone?: string | null })?.contact_phone || null,
       },
-      items: Array.isArray(order.items)
-        ? order.items.map((item: any) => ({
+      items: Array.isArray(orderData.items)
+        ? orderData.items.map((item: { id: string; product_id: string; quantity: number; price_at_order: number; product?: { name?: string; unit?: string; image_path?: string | null } }) => ({
             id: item.id,
             product_id: item.product_id,
             quantity: item.quantity,
@@ -380,14 +384,17 @@ export async function cancelOrder(
       };
     }
 
-    if (order.customer_id !== user.id) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const orderData = order as any;
+
+    if (orderData.customer_id !== user.id) {
       return {
         success: false,
         error: "권한이 없습니다",
       };
     }
 
-    if (order.status !== "pending") {
+    if (orderData.status !== "pending") {
       return {
         success: false,
         error: "대기 중인 주문만 취소할 수 있습니다",
@@ -395,7 +402,8 @@ export async function cancelOrder(
     }
 
     // Update order status
-    const { error: updateError } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: updateError } = await (supabase as any)
       .from("orders")
       .update({ status: "cancelled", updated_at: new Date().toISOString() })
       .eq("id", orderId);

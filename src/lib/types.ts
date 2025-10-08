@@ -16,7 +16,7 @@ export const SignupSchema = z.object({
       "비밀번호는 영문 소문자와 숫자를 포함해야 합니다"
     ),
   role: z.enum(["customer", "seller"], {
-    required_error: "역할을 선택하세요",
+    message: "역할을 선택하세요",
   }),
 });
 
@@ -74,7 +74,7 @@ export const DistrictZoneValueSchema = z.object({
 
 export const ZoneSchema = z.object({
   zone_type: z.enum(["radius", "district"], {
-    required_error: "배송 권역 유형을 선택하세요",
+    message: "배송 권역 유형을 선택하세요",
   }),
   zone_value: z.union([RadiusZoneValueSchema, DistrictZoneValueSchema]),
   min_order_amount: z.number().nonnegative("최소 주문금액은 0 이상이어야 합니다"),

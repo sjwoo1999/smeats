@@ -60,7 +60,8 @@ export async function getRecipes(): Promise<RecipeWithItems[]> {
       return [];
     }
 
-    return recipes.map((r) => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (recipes as any[]).map((r) => ({
       id: r.id,
       name: r.name,
       category: r.category,
@@ -108,13 +109,16 @@ export async function getRecipeWithItems(
       return null;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const recipeData = recipe as any;
+
     return {
-      id: recipe.id,
-      name: recipe.name,
-      category: recipe.category,
-      description: recipe.description,
-      image_path: recipe.image_path,
-      items: Array.isArray(recipe.items) ? recipe.items : [],
+      id: recipeData.id,
+      name: recipeData.name,
+      category: recipeData.category,
+      description: recipeData.description,
+      image_path: recipeData.image_path,
+      items: Array.isArray(recipeData.items) ? recipeData.items : [],
     };
   } catch (error) {
     console.error("Get recipe with items error:", error);
@@ -234,7 +238,8 @@ export async function getRecipeCategories(): Promise<string[]> {
 
     // Get unique categories
     const categories = Array.from(
-      new Set(data.map((r) => r.category).filter(Boolean))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      new Set((data as any[]).map((r) => r.category).filter(Boolean))
     );
 
     return categories.sort();

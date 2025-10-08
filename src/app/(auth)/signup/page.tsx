@@ -28,7 +28,7 @@ export default function SignupPage() {
     // Validate
     const validation = SignupSchema.safeParse(data);
     if (!validation.success) {
-      setError(validation.error.errors[0]?.message || "입력값을 확인하세요");
+      setError(validation.error.issues[0]?.message || "입력값을 확인하세요");
       return;
     }
 

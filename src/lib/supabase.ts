@@ -4,14 +4,15 @@ import { cookies } from "next/headers";
 import type { Database } from "./database.types";
 
 // Environment validation
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
   throw new Error(
     "Missing Supabase environment variables. Please check .env.local"
   );
 }
+
+// Type-safe after validation
+const supabaseUrl: string = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey: string = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 /**
  * Browser client for client components
@@ -63,8 +64,9 @@ export function createAdminClient() {
   }
 
   // Use standard client with service role key
-  const { createClient: createSupabaseClient } = require("@supabase/supabase-js");
-  return createSupabaseClient<Database>(supabaseUrl, serviceRoleKey, {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any
+  const { createClient: createSupabaseClient } = require("@supabase/supabase-js") as any;
+  return createSupabaseClient(supabaseUrl, serviceRoleKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
@@ -94,16 +96,20 @@ export async function getCurrentUser() {
  * Get user profile with role
  * Returns null if not found or not authenticated
  */
-export async function getUserProfile() {
+export async function getUserProfile(): Promise<Database["public"]["Tables"]["profiles"]["Row"] | null> {
   const user = await getCurrentUser();
   if (!user) return null;
 
   const supabase = await createServerSupabaseClient();
-  const { data: profile } = await supabase
+  const { data: profile, error } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
     .single();
+
+  if (error || !profile) {
+    return null;
+  }
 
   return profile;
 }

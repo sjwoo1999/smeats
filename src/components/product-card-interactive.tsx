@@ -28,7 +28,7 @@ export interface ProductCardInteractiveProps extends React.HTMLAttributes<HTMLDi
 const ProductCardInteractive = React.forwardRef<HTMLDivElement, ProductCardInteractiveProps>(
   ({ product, isLoading = false, className, ...props }, ref) => {
     const router = useRouter();
-    const { addItem } = useCart();
+    const { add } = useCart();
     const [isAdding, setIsAdding] = React.useState(false);
 
     if (isLoading) {
@@ -65,7 +65,7 @@ const ProductCardInteractive = React.forwardRef<HTMLDivElement, ProductCardInter
       setIsAdding(true);
 
       try {
-        addItem({
+        add({
           product_id: product.id,
           seller_id: product.seller_id,
           name: product.name,

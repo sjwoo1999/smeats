@@ -35,7 +35,8 @@ export async function signUp(input: SignupInput): Promise<ApiResponse<{ userId: 
     }
 
     // Initialize profile with selected role
-    const { error: profileError } = await supabase.rpc("init_profile", {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: profileError } = await (supabase as any).rpc("init_profile", {
       p_role: validated.role,
     });
 

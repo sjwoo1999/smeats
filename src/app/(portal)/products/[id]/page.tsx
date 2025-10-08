@@ -12,7 +12,7 @@ import Image from "next/image";
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { addItem } = useCart();
+  const { add } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
 
@@ -45,7 +45,7 @@ export default function ProductDetailPage() {
   const handleAddToCart = async () => {
     setIsAdding(true);
 
-    addItem({
+    add({
       product_id: product.id,
       seller_id: product.seller_id,
       name: product.name,
