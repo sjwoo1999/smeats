@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
+export const dynamic = 'force-dynamic';
+
 interface SearchParams {
   q?: string;
   category?: string;

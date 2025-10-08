@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
+export const dynamic = 'force-dynamic';
+
 export default async function RecipesPage() {
   const result = await browseRecipes();
 

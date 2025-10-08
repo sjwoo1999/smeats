@@ -3,6 +3,8 @@ import { getUserProfile } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
+
 /**
  * Dashboard - role-based routing
  * Redirects based on user role:

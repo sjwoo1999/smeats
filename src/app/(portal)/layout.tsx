@@ -3,6 +3,8 @@ import EmailVerificationBanner from "@/components/email-verification-banner";
 import { CartProvider } from "@/components/cart-provider";
 import { Navigation } from "@/components/navigation";
 
+export const dynamic = 'force-dynamic';
+
 /**
  * Protected portal layout
  * Shows email verification banner if needed

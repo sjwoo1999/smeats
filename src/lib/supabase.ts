@@ -3,22 +3,20 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { Database } from "./database.types";
 
-// Environment validation
-if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-  throw new Error(
-    "Missing Supabase environment variables. Please check .env.local"
-  );
-}
-
-// Type-safe after validation
-const supabaseUrl: string = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey: string = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// Environment variables with fallback for build time
+const supabaseUrl: string = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const supabaseAnonKey: string = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 /**
  * Browser client for client components
  * Uses anon key - safe for client-side
  */
 export function createClient() {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error(
+      "Missing Supabase environment variables. Please check .env.local"
+    );
+  }
   return createBrowserClient<Database>(supabaseUrl, supabaseAnonKey);
 }
 
@@ -28,6 +26,12 @@ export function createClient() {
  * NEVER exposes service role key to client
  */
 export async function createServerSupabaseClient() {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error(
+      "Missing Supabase environment variables. Please check .env.local"
+    );
+  }
+
   const cookieStore = await cookies();
 
   return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {

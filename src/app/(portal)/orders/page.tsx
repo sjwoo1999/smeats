@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
+export const dynamic = 'force-dynamic';
+
 const statusConfig = {
   pending: { label: "주문 접수", variant: "info" as const, color: "text-info" },
   preparing: { label: "준비중", variant: "warning" as const, color: "text-warning" },
