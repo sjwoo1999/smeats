@@ -6,15 +6,16 @@ import {
   ProductSearchSchema,
   type ProductSearchParams,
   type ProductWithSeller,
+  type ApiResponse,
 } from "@/lib/types";
 
 /**
- * Search products with delivery zone filtering
+ * Search products with delivery zone filtering (API response format)
  * Groups by (name, unit) and marks lowest price
  */
 export async function searchProducts(
   params: ProductSearchParams
-): Promise<ProductWithSeller[]> {
+): Promise<ApiResponse<{ products: ProductWithSeller[]; grouped: number }>> {
   try {
     // Validate search params
     const validated = ProductSearchSchema.parse(params);
@@ -79,7 +80,7 @@ export async function searchProducts(
     }
 
     // Apply radius delivery filter if customer has location
-    let filteredProducts = products;
+    const filteredProducts = products;
 
     if (
       !bypassFilter &&
@@ -135,10 +136,22 @@ export async function searchProducts(
     const start = (validated.page - 1) * validated.limit;
     const end = start + validated.limit;
 
-    return grouped.slice(start, end);
+    const paginatedProducts = grouped.slice(start, end);
+    const groupedCount = paginatedProducts.filter((p) => p.is_lowest_price).length;
+
+    return {
+      success: true,
+      data: {
+        products: paginatedProducts,
+        grouped: groupedCount,
+      },
+    };
   } catch (error) {
     console.error("Search products error:", error);
-    return [];
+    return {
+      success: false,
+      error: "상품 검색 중 오류가 발생했습니다",
+    };
   }
 }
 

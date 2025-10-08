@@ -7,8 +7,27 @@ import {
   type RecipeCalculationResult,
   type RecipeCalculationItem,
   type ProductWithSeller,
+  type ApiResponse,
 } from "@/lib/types";
 import { searchProducts } from "./products";
+
+/**
+ * Browse recipes (API response format)
+ */
+export async function browseRecipes(): Promise<ApiResponse<RecipeWithItems[]>> {
+  try {
+    const recipes = await getRecipes();
+    return {
+      success: true,
+      data: recipes,
+    };
+  } catch {
+    return {
+      success: false,
+      error: "레시피를 불러오는데 실패했습니다",
+    };
+  }
+}
 
 /**
  * Get all recipe templates
@@ -125,10 +144,16 @@ export async function calculateRecipe(
     }
 
     // Get all available products (no filters, just in-stock)
-    const allProducts = await searchProducts({
+    const productsResult = await searchProducts({
       page: 1,
       limit: 1000, // Get all products for matching
     });
+
+    if (!productsResult.success) {
+      return null;
+    }
+
+    const allProducts = productsResult.data.products;
 
     // Calculate quantities and match products
     const calculationItems: RecipeCalculationItem[] = recipe.items.map(

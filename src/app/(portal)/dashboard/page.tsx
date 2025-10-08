@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getUserProfile } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 
 /**
  * Dashboard - role-based routing
@@ -46,12 +47,12 @@ export default async function DashboardPage() {
             <p className="text-sm text-text-secondary mb-4">
               배송 가능한 마트의 상품을 검색하고 최저가를 비교하세요.
             </p>
-            <a
+            <Link
               href="/products"
               className="inline-flex items-center text-sm text-primary hover:underline"
             >
               상품 보기 →
-            </a>
+            </Link>
           </CardContent>
         </Card>
 
@@ -63,12 +64,12 @@ export default async function DashboardPage() {
             <p className="text-sm text-text-secondary mb-4">
               레시피 템플릿으로 필요한 식자재를 한 번에 주문하세요.
             </p>
-            <a
+            <Link
               href="/recipes"
               className="inline-flex items-center text-sm text-primary hover:underline"
             >
               레시피 보기 →
-            </a>
+            </Link>
           </CardContent>
         </Card>
 
@@ -80,12 +81,12 @@ export default async function DashboardPage() {
             <p className="text-sm text-text-secondary mb-4">
               주문 상태를 확인하고 배송 정보를 추적하세요.
             </p>
-            <a
+            <Link
               href="/orders"
               className="inline-flex items-center text-sm text-primary hover:underline"
             >
               주문 보기 →
-            </a>
+            </Link>
           </CardContent>
         </Card>
       </div>

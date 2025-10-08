@@ -108,6 +108,26 @@ export async function placeOrder(
 }
 
 /**
+ * List orders for current user (API response format)
+ */
+export async function listOrders(
+  status?: OrderStatus
+): Promise<ApiResponse<OrderWithDetails[]>> {
+  try {
+    const orders = await getOrders(status);
+    return {
+      success: true,
+      data: orders,
+    };
+  } catch {
+    return {
+      success: false,
+      error: "주문 목록을 불러오는데 실패했습니다",
+    };
+  }
+}
+
+/**
  * Get orders for current user with optional status filter
  */
 export async function getOrders(
