@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/components/cart-provider";
 import { useToast } from "@/components/toast";
+import { useDemo } from "@/components/demo-provider";
 import { cn } from "@/lib/cn";
 
 export interface ProductCardInteractiveProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -33,6 +34,7 @@ const ProductCardInteractive = React.forwardRef<HTMLDivElement, ProductCardInter
     const router = useRouter();
     const { add } = useCart();
     const { showToast } = useToast();
+    const { isDemo } = useDemo();
     const [isAdding, setIsAdding] = React.useState(false);
 
     if (isLoading) {
@@ -89,8 +91,8 @@ const ProductCardInteractive = React.forwardRef<HTMLDivElement, ProductCardInter
         // Simulate API delay
         await new Promise((resolve) => setTimeout(resolve, 300));
 
-        // Show success toast with action button
-        showToast("success", "장바구니에 추가되었습니다", {
+        // Show success toast with action button (with demo hint if in demo mode)
+        showToast("success", isDemo ? "[데모] 장바구니에 추가되었습니다" : "장바구니에 추가되었습니다", {
           description: `${product.name} 1${product.unit}`,
           action: {
             label: "장바구니 보기",
@@ -99,7 +101,7 @@ const ProductCardInteractive = React.forwardRef<HTMLDivElement, ProductCardInter
         });
       } catch (error) {
         console.error("Failed to add to cart:", error);
-        showToast("error", "장바구니 추가 실패", {
+        showToast("error", isDemo ? "[데모] 장바구니 추가 실패" : "장바구니 추가 실패", {
           description: "다시 시도해주세요",
         });
       } finally {
