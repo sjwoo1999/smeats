@@ -22,6 +22,8 @@ export interface ProductCardInteractiveProps extends React.HTMLAttributes<HTMLDi
     imageAlt?: string;
     isLowestPrice?: boolean;
     badge?: string;
+    stock?: number;
+    minOrder?: number;
   };
   isLoading?: boolean;
 }
@@ -60,6 +62,13 @@ const ProductCardInteractive = React.forwardRef<HTMLDivElement, ProductCardInter
 
     const handleCardClick = () => {
       router.push(`/products/${product.id}`);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        handleCardClick();
+      }
     };
 
     const handleAddToCart = async (e: React.MouseEvent) => {
@@ -103,12 +112,14 @@ const ProductCardInteractive = React.forwardRef<HTMLDivElement, ProductCardInter
         ref={ref}
         variant="elevated"
         className={cn(
-          "group overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-lg",
+          "group overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-lg focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2",
           className
         )}
         role="article"
         aria-label={`${product.name} 상품 카드`}
+        tabIndex={0}
         onClick={handleCardClick}
+        onKeyDown={handleKeyDown}
         {...props}
       >
         {/* Image Container */}
@@ -229,6 +240,30 @@ const ProductCardInteractive = React.forwardRef<HTMLDivElement, ProductCardInter
               {formatPrice(product.price)}
             </p>
             <span className="text-sm text-text-secondary">/ {product.unit}</span>
+          </div>
+
+          {/* Stock and Min Order Info */}
+          <div className="flex items-center gap-2 text-xs text-text-secondary pt-1">
+            {product.stock !== undefined && (
+              <div className="flex items-center gap-1">
+                {product.stock > 0 ? (
+                  <>
+                    <div className="w-2 h-2 rounded-full bg-success" />
+                    <span>재고 {product.stock}{product.unit}</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-2 h-2 rounded-full bg-danger" />
+                    <span className="text-danger font-medium">품절</span>
+                  </>
+                )}
+              </div>
+            )}
+            {product.minOrder !== undefined && product.minOrder > 1 && (
+              <span className="text-text-muted">
+                • 최소 {product.minOrder}{product.unit}
+              </span>
+            )}
           </div>
         </div>
       </Card>

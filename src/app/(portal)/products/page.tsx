@@ -98,6 +98,7 @@ async function ProductsList({ searchParams }: { searchParams: SearchParams }) {
               imageAlt: product.name,
               isLowestPrice: product.is_lowest_price,
               badge: product.category,
+              stock: product.stock,
             }}
           />
         ))}
