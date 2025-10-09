@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/cn";
+import { useCart } from "./cart-provider";
 
 interface NavLink {
   href: string;
@@ -94,6 +95,10 @@ const navLinks: NavLink[] = [
 export function Navigation() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { items } = useCart();
+
+  // Calculate total cart items
+  const cartItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <nav className="border-b border-border bg-bg-subtle sticky top-0 z-50 backdrop-blur-sm bg-bg-subtle/80">
@@ -111,12 +116,14 @@ export function Navigation() {
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => {
               const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+              const isCart = link.href === "/cart";
+
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                    "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors relative",
                     isActive
                       ? "text-primary bg-primary/10"
                       : "text-text hover:text-primary hover:bg-bg-muted"
@@ -124,6 +131,11 @@ export function Navigation() {
                 >
                   {link.icon}
                   {link.label}
+                  {isCart && cartItemCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-danger text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {cartItemCount > 99 ? "99+" : cartItemCount}
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -191,12 +203,14 @@ export function Navigation() {
             <div className="space-y-1">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                const isCart = link.href === "/cart";
+
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
                     className={cn(
-                      "flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-colors",
+                      "flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-colors relative",
                       isActive
                         ? "text-primary bg-primary/10"
                         : "text-text hover:text-primary hover:bg-bg-muted"
@@ -205,6 +219,11 @@ export function Navigation() {
                   >
                     {link.icon}
                     {link.label}
+                    {isCart && cartItemCount > 0 && (
+                      <span className="ml-auto bg-danger text-white text-xs font-bold rounded-full px-2 py-0.5">
+                        {cartItemCount > 99 ? "99+" : cartItemCount}
+                      </span>
+                    )}
                   </Link>
                 );
               })}

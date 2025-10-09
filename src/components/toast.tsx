@@ -5,16 +5,29 @@ import { cn } from "@/lib/cn";
 
 type ToastType = "success" | "error" | "warning" | "info";
 
+interface ToastAction {
+  label: string;
+  onClick: () => void;
+}
+
 interface Toast {
   id: string;
   type: ToastType;
   message: string;
+  description?: string;
   duration?: number;
+  action?: ToastAction;
+}
+
+interface ShowToastOptions {
+  description?: string;
+  duration?: number;
+  action?: ToastAction;
 }
 
 interface ToastContextValue {
   toasts: Toast[];
-  showToast: (type: ToastType, message: string, duration?: number) => void;
+  showToast: (type: ToastType, message: string, options?: ShowToastOptions) => void;
   removeToast: (id: string) => void;
 }
 
@@ -28,9 +41,17 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const showToast = React.useCallback(
-    (type: ToastType, message: string, duration: number = 3000) => {
+    (type: ToastType, message: string, options?: ShowToastOptions) => {
       const id = Math.random().toString(36).substring(7);
-      const toast: Toast = { id, type, message, duration };
+      const duration = options?.duration ?? 3000;
+      const toast: Toast = {
+        id,
+        type,
+        message,
+        description: options?.description,
+        duration,
+        action: options?.action,
+      };
 
       setToasts((prev) => [...prev, toast]);
 
@@ -131,27 +152,47 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: (id: string) => 
   return (
     <div
       className={cn(
-        "flex items-center gap-3 p-4 rounded-lg border shadow-lg backdrop-blur-sm pointer-events-auto animate-in slide-in-from-right",
+        "flex flex-col gap-2 p-4 rounded-lg border shadow-lg backdrop-blur-sm pointer-events-auto animate-in slide-in-from-right",
         typeStyles[toast.type]
       )}
       role="alert"
     >
-      <div className="flex-shrink-0">{icons[toast.type]}</div>
-      <p className="flex-1 text-sm font-medium">{toast.message}</p>
-      <button
-        onClick={() => onClose(toast.id)}
-        className="flex-shrink-0 hover:opacity-70 transition-opacity"
-        aria-label="닫기"
-      >
-        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
+      <div className="flex items-start gap-3">
+        <div className="flex-shrink-0">{icons[toast.type]}</div>
+        <div className="flex-1 space-y-1">
+          <p className="text-sm font-medium">{toast.message}</p>
+          {toast.description && (
+            <p className="text-sm opacity-90">{toast.description}</p>
+          )}
+        </div>
+        <button
+          onClick={() => onClose(toast.id)}
+          className="flex-shrink-0 hover:opacity-70 transition-opacity"
+          aria-label="닫기"
+        >
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      {toast.action && (
+        <div className="flex justify-end">
+          <button
+            onClick={() => {
+              toast.action?.onClick();
+              onClose(toast.id);
+            }}
+            className="text-sm font-semibold underline hover:no-underline transition-all"
+          >
+            {toast.action.label}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
