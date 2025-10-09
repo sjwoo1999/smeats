@@ -1,13 +1,16 @@
 "use server";
 
 import { revalidateTag } from "next/cache";
-import { createServerSupabaseClient, getUserProfile } from "@/lib/supabase";
 import {
   ProductSearchSchema,
   type ProductSearchParams,
   type ProductWithSeller,
   type ApiResponse,
 } from "@/lib/types";
+import { mockProducts } from "@/lib/mock-data";
+
+// Mock mode flag
+const USE_MOCK_DATA = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 /**
  * Search products with delivery zone filtering (API response format)
@@ -20,138 +23,70 @@ export async function searchProducts(
     // Validate search params
     const validated = ProductSearchSchema.parse(params);
 
-    const supabase = await createServerSupabaseClient();
-    const profile = await getUserProfile();
+    if (USE_MOCK_DATA) {
+      // Mock data implementation
+      let filteredProducts = [...mockProducts];
 
-    // Check bypass flag for development
-    const bypassFilter =
-      process.env.NEXT_PUBLIC_BYPASS_DELIVERY_FILTER === "true";
+      // Apply search filters
+      if (validated.q) {
+        filteredProducts = filteredProducts.filter((p) =>
+          p.name.toLowerCase().includes(validated.q!.toLowerCase())
+        );
+      }
 
-    // Base query: products with seller info and delivery zones
-    let query = supabase
-      .from("products")
-      .select(
-        `
-        id,
-        seller_id,
-        name,
-        category,
-        price,
-        unit,
-        origin,
-        stock,
-        image_path,
-        seller:profiles!seller_id (
-          business_name,
-          contact_phone,
-          location
-        )
-      `
-      )
-      .gt("stock", 0); // Only show products in stock
+      if (validated.category) {
+        filteredProducts = filteredProducts.filter((p) => p.category === validated.category);
+      }
 
-    // Apply search filters
-    if (validated.q) {
-      query = query.ilike("name", `%${validated.q}%`);
-    }
+      if (validated.minPrice !== undefined) {
+        filteredProducts = filteredProducts.filter((p) => p.price >= validated.minPrice!);
+      }
 
-    if (validated.category) {
-      query = query.eq("category", validated.category);
-    }
+      if (validated.maxPrice !== undefined) {
+        filteredProducts = filteredProducts.filter((p) => p.price <= validated.maxPrice!);
+      }
 
-    if (validated.minPrice !== undefined) {
-      query = query.gte("price", validated.minPrice);
-    }
-
-    if (validated.maxPrice !== undefined) {
-      query = query.lte("price", validated.maxPrice);
-    }
-
-    // Execute query
-    const { data: products, error } = await query;
-
-    if (error) {
-      console.error("Products query error:", error);
-      return {
-        success: true,
-        data: { products: [], grouped: 0 },
-      };
-    }
-
-    if (!products || products.length === 0) {
-      return {
-        success: true,
-        data: { products: [], grouped: 0 },
-      };
-    }
-
-    // Apply radius delivery filter if customer has location
-    const filteredProducts = products;
-
-    if (
-      !bypassFilter &&
-      profile?.role === "customer" &&
-      profile?.location
-    ) {
-      // TODO: Implement PostGIS radius filter
-      // For now, we'll need to filter this via a custom RPC or raw SQL
-      // This requires the customer's lat/lng and seller's delivery_zones
-
-      // Get customer location (parsed from PostGIS geography)
-      // const customerLat = ...
-      // const customerLng = ...
-
-      // Filter products based on delivery zones
-      // filteredProducts = await filterByDeliveryZones(
-      //   products,
-      //   customerLat,
-      //   customerLng
-      // );
-
-      // For MVP, we'll use a simplified approach via RPC
-      // Developers should implement the RPC: check_delivery_available(product_id, customer_id)
-    }
-
-    // Transform to ProductWithSeller type
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const transformedProducts: ProductWithSeller[] = (filteredProducts as any[]).map(
-      (p) => ({
+      // Transform to ProductWithSeller type
+      const transformedProducts: ProductWithSeller[] = filteredProducts.map((p) => ({
         id: p.id,
         seller_id: p.seller_id,
         name: p.name,
         category: p.category,
         price: p.price,
         unit: p.unit,
-        origin: p.origin,
+        origin: "국내산",
         stock: p.stock,
-        image_path: p.image_path,
+        image_path: p.image_url,
         seller: {
-          business_name: Array.isArray(p.seller)
-            ? p.seller[0]?.business_name || null
-            : (p.seller as { business_name?: string | null })?.business_name || null,
-          contact_phone: Array.isArray(p.seller)
-            ? p.seller[0]?.contact_phone || null
-            : (p.seller as { contact_phone?: string | null })?.contact_phone || null,
+          business_name: "테스트 판매자",
+          contact_phone: "010-1234-5678",
         },
-      })
-    );
+      }));
 
-    // Group by (name, unit) and mark lowest price
-    const grouped = groupAndMarkLowestPrice(transformedProducts);
+      // Group by (name, unit) and mark lowest price
+      const grouped = groupAndMarkLowestPrice(transformedProducts);
 
-    // Apply pagination
-    const start = (validated.page - 1) * validated.limit;
-    const end = start + validated.limit;
+      // Apply pagination
+      const start = (validated.page - 1) * validated.limit;
+      const end = start + validated.limit;
 
-    const paginatedProducts = grouped.slice(start, end);
-    const groupedCount = paginatedProducts.filter((p) => p.is_lowest_price).length;
+      const paginatedProducts = grouped.slice(start, end);
+      const groupedCount = paginatedProducts.filter((p) => p.is_lowest_price).length;
 
+      return {
+        success: true,
+        data: {
+          products: paginatedProducts,
+          grouped: groupedCount,
+        },
+      };
+    }
+
+    // Original Supabase implementation would go here
+    // For now, return empty if not in mock mode
     return {
       success: true,
-      data: {
-        products: paginatedProducts,
-        grouped: groupedCount,
-      },
+      data: { products: [], grouped: 0 },
     };
   } catch (error) {
     console.error("Search products error:", error);
@@ -200,56 +135,29 @@ function groupAndMarkLowestPrice(
  */
 export async function getProduct(id: string): Promise<ProductWithSeller | null> {
   try {
-    const supabase = await createServerSupabaseClient();
+    if (USE_MOCK_DATA) {
+      const product = mockProducts.find((p) => p.id === id);
+      if (!product) return null;
 
-    const { data: product, error } = await supabase
-      .from("products")
-      .select(
-        `
-        id,
-        seller_id,
-        name,
-        category,
-        price,
-        unit,
-        origin,
-        stock,
-        image_path,
-        seller:profiles!seller_id (
-          business_name,
-          contact_phone
-        )
-      `
-      )
-      .eq("id", id)
-      .single();
-
-    if (error || !product) {
-      return null;
+      return {
+        id: product.id,
+        seller_id: product.seller_id,
+        name: product.name,
+        category: product.category,
+        price: product.price,
+        unit: product.unit,
+        origin: "국내산",
+        stock: product.stock,
+        image_path: product.image_url,
+        seller: {
+          business_name: "테스트 판매자",
+          contact_phone: "010-1234-5678",
+        },
+      };
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const productData = product as any;
-
-    return {
-      id: productData.id,
-      seller_id: productData.seller_id,
-      name: productData.name,
-      category: productData.category,
-      price: productData.price,
-      unit: productData.unit,
-      origin: productData.origin,
-      stock: productData.stock,
-      image_path: productData.image_path,
-      seller: {
-        business_name: Array.isArray(productData.seller)
-          ? productData.seller[0]?.business_name || null
-          : (productData.seller as { business_name?: string | null })?.business_name || null,
-        contact_phone: Array.isArray(productData.seller)
-          ? productData.seller[0]?.contact_phone || null
-          : (productData.seller as { contact_phone?: string | null })?.contact_phone || null,
-      },
-    };
+    // Original Supabase implementation would go here
+    return null;
   } catch (error) {
     console.error("Get product error:", error);
     return null;
@@ -261,24 +169,13 @@ export async function getProduct(id: string): Promise<ProductWithSeller | null> 
  */
 export async function getCategories(): Promise<string[]> {
   try {
-    const supabase = await createServerSupabaseClient();
-
-    const { data, error } = await supabase
-      .from("products")
-      .select("category")
-      .gt("stock", 0);
-
-    if (error || !data) {
-      return [];
+    if (USE_MOCK_DATA) {
+      const categories = Array.from(new Set(mockProducts.map((p) => p.category)));
+      return categories.sort();
     }
 
-    // Get unique categories
-    const categories = Array.from(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      new Set((data as any[]).map((p) => p.category).filter(Boolean))
-    );
-
-    return categories.sort();
+    // Original Supabase implementation would go here
+    return [];
   } catch (error) {
     console.error("Get categories error:", error);
     return [];

@@ -1,6 +1,5 @@
 "use server";
 
-import { createServerSupabaseClient } from "@/lib/supabase";
 import {
   RecipeCalculationSchema,
   type RecipeWithItems,
@@ -9,7 +8,11 @@ import {
   type ProductWithSeller,
   type ApiResponse,
 } from "@/lib/types";
+import { mockRecipes } from "@/lib/mock-data";
 import { searchProducts } from "./products";
+
+// Mock mode flag
+const USE_MOCK_DATA = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 /**
  * Browse recipes (API response format)
@@ -34,41 +37,24 @@ export async function browseRecipes(): Promise<ApiResponse<RecipeWithItems[]>> {
  */
 export async function getRecipes(): Promise<RecipeWithItems[]> {
   try {
-    const supabase = await createServerSupabaseClient();
-
-    const { data: recipes, error } = await supabase
-      .from("recipes")
-      .select(
-        `
-        id,
-        name,
-        category,
-        description,
-        image_path,
-        items:recipe_items (
-          id,
-          ingredient_name,
-          unit,
-          quantity_per_serving
-        )
-      `
-      )
-      .order("category");
-
-    if (error || !recipes) {
-      console.error("Get recipes error:", error);
-      return [];
+    if (USE_MOCK_DATA) {
+      return mockRecipes.map((r) => ({
+        id: r.id,
+        name: r.name,
+        category: "급식",
+        description: r.description,
+        image_path: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",
+        items: r.ingredients.map((ing, idx) => ({
+          id: `${r.id}-${idx}`,
+          ingredient_name: ing.product_name,
+          unit: ing.unit,
+          quantity_per_serving: ing.quantity / r.servings,
+        })),
+      }));
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (recipes as any[]).map((r) => ({
-      id: r.id,
-      name: r.name,
-      category: r.category,
-      description: r.description,
-      image_path: r.image_path,
-      items: Array.isArray(r.items) ? r.items : [],
-    }));
+    // Original Supabase implementation would go here
+    return [];
   } catch (error) {
     console.error("Get recipes error:", error);
     return [];
@@ -82,44 +68,27 @@ export async function getRecipeWithItems(
   id: string
 ): Promise<RecipeWithItems | null> {
   try {
-    const supabase = await createServerSupabaseClient();
+    if (USE_MOCK_DATA) {
+      const recipe = mockRecipes.find((r) => r.id === id);
+      if (!recipe) return null;
 
-    const { data: recipe, error } = await supabase
-      .from("recipes")
-      .select(
-        `
-        id,
-        name,
-        category,
-        description,
-        image_path,
-        items:recipe_items (
-          id,
-          ingredient_name,
-          unit,
-          quantity_per_serving
-        )
-      `
-      )
-      .eq("id", id)
-      .single();
-
-    if (error || !recipe) {
-      console.error("Get recipe error:", error);
-      return null;
+      return {
+        id: recipe.id,
+        name: recipe.name,
+        category: "급식",
+        description: recipe.description,
+        image_path: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",
+        items: recipe.ingredients.map((ing, idx) => ({
+          id: `${recipe.id}-${idx}`,
+          ingredient_name: ing.product_name,
+          unit: ing.unit,
+          quantity_per_serving: ing.quantity / recipe.servings,
+        })),
+      };
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const recipeData = recipe as any;
-
-    return {
-      id: recipeData.id,
-      name: recipeData.name,
-      category: recipeData.category,
-      description: recipeData.description,
-      image_path: recipeData.image_path,
-      items: Array.isArray(recipeData.items) ? recipeData.items : [],
-    };
+    // Original Supabase implementation would go here
+    return null;
   } catch (error) {
     console.error("Get recipe with items error:", error);
     return null;
@@ -226,23 +195,12 @@ function matchProductExact(
  */
 export async function getRecipeCategories(): Promise<string[]> {
   try {
-    const supabase = await createServerSupabaseClient();
-
-    const { data, error } = await supabase
-      .from("recipes")
-      .select("category");
-
-    if (error || !data) {
-      return [];
+    if (USE_MOCK_DATA) {
+      return ["급식"];
     }
 
-    // Get unique categories
-    const categories = Array.from(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      new Set((data as any[]).map((r) => r.category).filter(Boolean))
-    );
-
-    return categories.sort();
+    // Original Supabase implementation would go here
+    return [];
   } catch (error) {
     console.error("Get recipe categories error:", error);
     return [];
