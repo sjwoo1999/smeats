@@ -71,15 +71,22 @@ async function ProductsList({ searchParams }: { searchParams: SearchParams }) {
   return (
     <div className="space-y-6">
       {/* Results Info */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-text-secondary">
-          총 <strong className="text-text">{products.length}개</strong> 상품
-          {grouped > 0 && (
-            <span className="ml-2">
-              (<strong className="text-primary">{grouped}개</strong> 최저가)
-            </span>
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="space-y-1">
+          <p className="text-sm text-text-secondary">
+            총 <strong className="text-text">{products.length}개</strong> 상품
+            {grouped > 0 && (
+              <span className="ml-2">
+                (<strong className="text-primary">{grouped}개</strong> 최저가)
+              </span>
+            )}
+          </p>
+          {searchParams.q && (
+            <p className="text-xs text-text-muted">
+              <span className="font-medium">&ldquo;{searchParams.q}&rdquo;</span> 검색 결과
+            </p>
           )}
-        </p>
+        </div>
       </div>
 
       {/* Products Grid */}
@@ -224,9 +231,9 @@ export default function ProductsPage({
           </div>
 
           {/* Active Filters */}
-          {(searchParams.q || searchParams.category) && (
-            <div className="flex flex-wrap gap-2 pt-2">
-              <span className="text-sm text-text-secondary">활성 필터:</span>
+          {(searchParams.q || searchParams.category || searchParams.minPrice || searchParams.maxPrice) && (
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
+              <span className="text-sm text-text-secondary font-medium">활성 필터:</span>
               {searchParams.q && (
                 <Badge variant="info" size="sm">
                   검색어: {searchParams.q}
@@ -235,6 +242,11 @@ export default function ProductsPage({
               {searchParams.category && (
                 <Badge variant="info" size="sm">
                   카테고리: {searchParams.category}
+                </Badge>
+              )}
+              {(searchParams.minPrice || searchParams.maxPrice) && (
+                <Badge variant="info" size="sm">
+                  가격: {searchParams.minPrice || "0"}원 ~ {searchParams.maxPrice || "∞"}원
                 </Badge>
               )}
             </div>

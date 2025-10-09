@@ -256,6 +256,45 @@ export default function RecipeDetailPage({ params }: { params: { id: string } })
 
               {/* Add to Cart Button */}
               <div className="pt-4 border-t border-border">
+                {/* Total Price Preview - Enhanced */}
+                {matchedItems.length > 0 && (
+                  <div className="bg-primary-bg/30 border border-primary/20 rounded-lg p-4 mb-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-text-secondary">총 예상 금액</p>
+                        <p className="text-xs text-text-muted mt-1">
+                          {matchedItems.length}개 재료 • {servings}인분 기준
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-2xl font-bold text-primary tabular-nums">
+                          {formatPrice(
+                            matchedItems.reduce(
+                              (sum, item) =>
+                                sum +
+                                (item.matched_product?.price || 0) *
+                                  Math.ceil(item.quantity_needed),
+                              0
+                            )
+                          )}
+                        </p>
+                        <p className="text-xs text-text-muted mt-1">
+                          인분당 약{" "}
+                          {formatPrice(
+                            matchedItems.reduce(
+                              (sum, item) =>
+                                sum +
+                                (item.matched_product?.price || 0) *
+                                  Math.ceil(item.quantity_needed),
+                              0
+                            ) / servings
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <Button
                   onClick={handleAddToCart}
                   disabled={matchedItems.length === 0}
@@ -267,22 +306,6 @@ export default function RecipeDetailPage({ params }: { params: { id: string } })
                     ? "구매 가능한 재료가 없습니다"
                     : `${matchedItems.length}개 재료 장바구니 담기`}
                 </Button>
-                {matchedItems.length > 0 && (
-                  <p className="text-sm text-text-secondary text-center mt-3">
-                    총 예상 금액:
-                    <strong className="text-primary ml-1 tabular-nums">
-                      {formatPrice(
-                        matchedItems.reduce(
-                          (sum, item) =>
-                            sum +
-                            (item.matched_product?.price || 0) *
-                              Math.ceil(item.quantity_needed),
-                          0
-                        )
-                      )}
-                    </strong>
-                  </p>
-                )}
               </div>
             </div>
           )}
