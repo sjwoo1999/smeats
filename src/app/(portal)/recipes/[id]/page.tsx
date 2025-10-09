@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { getRecipeWithItems, calculateRecipe } from "@/server/actions/recipes";
 import { useCart } from "@/components/cart-provider";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import Image from "next/image";
 import type { RecipeWithItems, RecipeCalculationResult } from "@/lib/types";
 
 export default function RecipeDetailPage({ params }: { params: { id: string } }) {
+  const router = useRouter();
   const [recipe, setRecipe] = useState<RecipeWithItems | null>(null);
   const [servings, setServings] = useState(10);
   const [calculation, setCalculation] = useState<RecipeCalculationResult | null>(null);
@@ -51,6 +53,10 @@ export default function RecipeDetailPage({ params }: { params: { id: string } })
   const matchedItems = calculation?.items.filter((i) => i.can_add_to_cart) || [];
   const unmatchedItems = calculation?.items.filter((i) => !i.can_add_to_cart) || [];
 
+  function handleBackToList() {
+    router.push("/recipes");
+  }
+
   function handleAddToCart() {
     const cartItems = matchedItems
       .filter((item) => item.matched_product)
@@ -70,6 +76,18 @@ export default function RecipeDetailPage({ params }: { params: { id: string } })
 
   return (
     <div className="space-y-8">
+      {/* Back Button */}
+      <Button
+        variant="ghost"
+        onClick={handleBackToList}
+        className="mb-4"
+      >
+        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        레시피 목록으로
+      </Button>
+
       {/* Recipe Header */}
       <Card variant="elevated" className="overflow-hidden">
         <div className="grid md:grid-cols-2 gap-6">

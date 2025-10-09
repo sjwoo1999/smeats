@@ -42,6 +42,10 @@ export default function ProductDetailPage() {
     }).format(price);
   };
 
+  const handleBackToList = () => {
+    router.push("/products");
+  };
+
   const handleAddToCart = async () => {
     setIsAdding(true);
 
@@ -65,6 +69,18 @@ export default function ProductDetailPage() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
+      {/* Back Button */}
+      <Button
+        variant="ghost"
+        onClick={handleBackToList}
+        className="mb-4"
+      >
+        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        상품 목록으로
+      </Button>
+
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-text-secondary">
         <button onClick={() => router.push("/products")} className="hover:text-primary">

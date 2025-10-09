@@ -8,7 +8,10 @@
       "Bash(mkdir:*)",
       "Bash(ls:*)",
       "Bash(find:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(tree:*)",
+      "Bash(cat:*)",
+      "Bash(du:*)"
     ],
     "deny": [],
     "ask": []

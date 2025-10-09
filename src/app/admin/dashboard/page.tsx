@@ -245,7 +245,7 @@ export default function AdminDashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button className="p-4 border border-border rounded-lg hover:bg-bg-subtle transition-colors text-left">
+            <a href="/admin/products" className="p-4 border border-border rounded-lg hover:bg-bg-subtle transition-colors text-left block">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center">
                   <svg className="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -257,9 +257,9 @@ export default function AdminDashboardPage() {
                   <p className="text-xs text-text-secondary">{stats.pendingProducts}개 대기 중</p>
                 </div>
               </div>
-            </button>
+            </a>
 
-            <button className="p-4 border border-border rounded-lg hover:bg-bg-subtle transition-colors text-left">
+            <a href="/admin/users" className="p-4 border border-border rounded-lg hover:bg-bg-subtle transition-colors text-left block">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -271,9 +271,9 @@ export default function AdminDashboardPage() {
                   <p className="text-xs text-text-secondary">전체 {stats.totalUsers}명</p>
                 </div>
               </div>
-            </button>
+            </a>
 
-            <button className="p-4 border border-border rounded-lg hover:bg-bg-subtle transition-colors text-left">
+            <a href="/admin/reports" className="p-4 border border-border rounded-lg hover:bg-bg-subtle transition-colors text-left block">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-info/10 flex items-center justify-center">
                   <svg className="w-5 h-5 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -285,7 +285,7 @@ export default function AdminDashboardPage() {
                   <p className="text-xs text-text-secondary">상세 분석 보기</p>
                 </div>
               </div>
-            </button>
+            </a>
           </div>
         </CardContent>
       </Card>

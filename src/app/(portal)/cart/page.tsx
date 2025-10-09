@@ -4,6 +4,7 @@ import { useCart } from "@/components/cart-provider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/components/toast";
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -11,6 +12,7 @@ import { useRouter } from "next/navigation";
 export default function CartPage() {
   const { items, setQuantity, remove, clear, totalAmount } = useCart();
   const router = useRouter();
+  const { showToast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Group items by seller
@@ -31,8 +33,23 @@ export default function CartPage() {
 
   const handleCheckout = async (sellerId: string) => {
     setIsProcessing(true);
-    // Navigate to checkout with seller items
-    router.push(`/checkout?seller=${sellerId}`);
+
+    // [데모] 장바구니에서 직접 주문 완료 처리
+    const sellerItems = items.filter(item => item.seller_id === sellerId);
+
+    // Toast 메시지 표시
+    showToast("success", "🎯 [데모] 주문이 완료되었습니다", {
+      description: "주문 내역에서 확인할 수 있습니다.",
+    });
+
+    // 해당 판매자 상품 장바구니에서 제거
+    sellerItems.forEach(item => remove(item.product_id));
+
+    // 주문 내역으로 이동
+    setTimeout(() => {
+      router.push("/orders");
+      setIsProcessing(false);
+    }, 800);
   };
 
   if (items.length === 0) {

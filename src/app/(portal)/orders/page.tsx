@@ -75,7 +75,7 @@ export default async function OrdersPage() {
                 주문 내역이 없습니다
               </h3>
               <p className="mt-2 text-sm text-text-secondary">
-                상품을 주문하면 여기에서 확인할 수 있습니다.
+                첫 주문을 시작해보세요!
               </p>
             </div>
             <Button variant="primary" onClick={() => (window.location.href = "/products")}>
