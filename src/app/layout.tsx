@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_KR } from "next/font/google";
+import { DemoProvider } from "@/components/demo-provider";
 import "./globals.css";
 
 const inter = Inter({
@@ -28,7 +29,9 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${inter.variable} ${notoSansKR.variable}`}>
       <body className="antialiased">
-        {children}
+        <DemoProvider>
+          {children}
+        </DemoProvider>
       </body>
     </html>
   );

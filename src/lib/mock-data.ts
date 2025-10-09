@@ -171,3 +171,251 @@ export const mockUser = {
   organization: "테스트 학교",
   created_at: new Date().toISOString(),
 };
+
+// Persona-based demo users
+export type PersonaType = "buyer" | "seller" | "admin";
+
+export const mockUsers = {
+  buyer: {
+    id: "buyer-demo-1",
+    email: "demo-buyer@smeats.com",
+    name: "김영양",
+    role: "buyer" as const,
+    organization: "서울 ○○초등학교",
+    phone: "010-1234-5678",
+    address: "서울시 강남구 테헤란로 123",
+    created_at: new Date().toISOString(),
+  },
+  seller: {
+    id: "seller-demo-1",
+    email: "demo-seller@smeats.com",
+    name: "이판매",
+    role: "seller" as const,
+    business_name: "신선마트",
+    business_registration: "123-45-67890",
+    phone: "010-9876-5432",
+    address: "서울시 송파구 송파대로 456",
+    created_at: new Date().toISOString(),
+  },
+  admin: {
+    id: "admin-demo-1",
+    email: "demo-admin@smeats.com",
+    name: "관리자",
+    role: "admin" as const,
+    created_at: new Date().toISOString(),
+  },
+};
+
+// Buyer's orders (주문 내역)
+export const mockBuyerOrders = [
+  {
+    id: "buyer-order-1",
+    user_id: "buyer-demo-1",
+    seller_id: "seller-demo-1",
+    seller_name: "신선마트",
+    status: "pending" as const,
+    total_amount: 150000,
+    delivery_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    delivery_address: "서울시 강남구 테헤란로 123",
+    created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    items: [
+      {
+        id: "buyer-order-1-1",
+        order_id: "buyer-order-1",
+        product_id: "1",
+        quantity: 10,
+        price_at_order: 15000,
+        product: {
+          name: mockProducts[0].name,
+          unit: mockProducts[0].unit,
+          image_path: mockProducts[0].image_url,
+        },
+      },
+    ],
+  },
+  {
+    id: "buyer-order-2",
+    user_id: "buyer-demo-1",
+    seller_id: "seller-demo-1",
+    seller_name: "신선마트",
+    status: "preparing" as const,
+    total_amount: 180000,
+    delivery_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    delivery_address: "서울시 강남구 테헤란로 123",
+    created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    items: [
+      {
+        id: "buyer-order-2-1",
+        order_id: "buyer-order-2",
+        product_id: "5",
+        quantity: 4,
+        price_at_order: 45000,
+        product: {
+          name: mockProducts[4].name,
+          unit: mockProducts[4].unit,
+          image_path: mockProducts[4].image_url,
+        },
+      },
+    ],
+  },
+  {
+    id: "buyer-order-3",
+    user_id: "buyer-demo-1",
+    seller_id: "seller-demo-1",
+    seller_name: "신선마트",
+    status: "delivered" as const,
+    total_amount: 95000,
+    delivery_date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    delivery_address: "서울시 강남구 테헤란로 123",
+    created_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+    items: [
+      {
+        id: "buyer-order-3-1",
+        order_id: "buyer-order-3",
+        product_id: "2",
+        quantity: 10,
+        price_at_order: 3500,
+        product: {
+          name: mockProducts[1].name,
+          unit: mockProducts[1].unit,
+          image_path: mockProducts[1].image_url,
+        },
+      },
+      {
+        id: "buyer-order-3-2",
+        order_id: "buyer-order-3",
+        product_id: "6",
+        quantity: 20,
+        price_at_order: 3000,
+        product: {
+          name: mockProducts[5].name,
+          unit: mockProducts[5].unit,
+          image_path: mockProducts[5].image_url,
+        },
+      },
+    ],
+  },
+];
+
+// Seller's received orders (받은 주문)
+export const mockSellerOrders = [
+  {
+    id: "seller-order-1",
+    user_id: "buyer-demo-1",
+    seller_id: "seller-demo-1",
+    buyer_name: "김영양",
+    buyer_organization: "서울 ○○초등학교",
+    status: "pending" as const,
+    total_amount: 150000,
+    delivery_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    delivery_address: "서울시 강남구 테헤란로 123",
+    created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    items: [
+      {
+        id: "seller-order-1-1",
+        order_id: "seller-order-1",
+        product_id: "1",
+        quantity: 10,
+        price_at_order: 15000,
+        product: {
+          name: mockProducts[0].name,
+          unit: mockProducts[0].unit,
+          image_path: mockProducts[0].image_url,
+        },
+      },
+    ],
+  },
+  {
+    id: "seller-order-2",
+    user_id: "buyer-demo-2",
+    seller_id: "seller-demo-1",
+    buyer_name: "박급식",
+    buyer_organization: "부산 △△중학교",
+    status: "preparing" as const,
+    total_amount: 225000,
+    delivery_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    delivery_address: "부산시 해운대구 해운대로 789",
+    created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    items: [
+      {
+        id: "seller-order-2-1",
+        order_id: "seller-order-2",
+        product_id: "5",
+        quantity: 5,
+        price_at_order: 45000,
+        product: {
+          name: mockProducts[4].name,
+          unit: mockProducts[4].unit,
+          image_path: mockProducts[4].image_url,
+        },
+      },
+    ],
+  },
+  {
+    id: "seller-order-3",
+    user_id: "buyer-demo-3",
+    seller_id: "seller-demo-1",
+    buyer_name: "최영양",
+    buyer_organization: "인천 □□고등학교",
+    status: "shipped" as const,
+    total_amount: 95000,
+    delivery_date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    delivery_address: "인천시 남동구 인주대로 321",
+    created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    items: [
+      {
+        id: "seller-order-3-1",
+        order_id: "seller-order-3",
+        product_id: "2",
+        quantity: 10,
+        price_at_order: 3500,
+        product: {
+          name: mockProducts[1].name,
+          unit: mockProducts[1].unit,
+          image_path: mockProducts[1].image_url,
+        },
+      },
+      {
+        id: "seller-order-3-2",
+        order_id: "seller-order-3",
+        product_id: "6",
+        quantity: 20,
+        price_at_order: 3000,
+        product: {
+          name: mockProducts[5].name,
+          unit: mockProducts[5].unit,
+          image_path: mockProducts[5].image_url,
+        },
+      },
+    ],
+  },
+];
+
+// Admin statistics
+export const mockAdminStats = {
+  totalUsers: 145,
+  totalBuyers: 89,
+  totalSellers: 52,
+  totalAdmins: 4,
+  totalOrders: 1234,
+  totalRevenue: 45600000,
+  monthlyRevenue: 8900000,
+  pendingOrders: 23,
+  preparingOrders: 45,
+  shippedOrders: 67,
+  deliveredOrders: 1099,
+  activeProducts: 234,
+  pendingProducts: 12,
+};
+
+// Seller statistics
+export const mockSellerStats = {
+  totalOrders: 89,
+  monthlyOrders: 23,
+  totalRevenue: 12300000,
+  monthlyRevenue: 3200000,
+  pendingOrders: 1,
+  preparingOrders: 1,
+  shippedOrders: 1,
+  activeProducts: 6,
+};
