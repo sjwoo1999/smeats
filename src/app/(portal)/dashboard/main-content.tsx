@@ -25,6 +25,7 @@ export default function MainContent({
   const [recentPurchases, setRecentPurchases] = useState<Product[]>([]);
   const [nearbyPopular, setNearbyPopular] = useState<any[]>([]);
   const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [recipes, setRecipes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -67,9 +68,21 @@ export default function MainContent({
         },
       ];
 
+      const mockRecipes = userBusinessType
+        ? [
+            {
+              recipe_id: "1",
+              recipe_name: "김치찌개",
+              category: userBusinessType,
+              servings: 100,
+            },
+          ]
+        : [];
+
       setRecentPurchases(mockRecentPurchases);
       setNearbyPopular(userRegion ? mockNearbyPopular : []);
       setRecommendations(userBusinessType ? mockRecommendations : []);
+      setRecipes(mockRecipes);
       setLoading(false);
     };
 
@@ -162,6 +175,28 @@ export default function MainContent({
         </section>
       )}
 
+      {/* 업종별 추천 레시피 */}
+      {recipes.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold">
+              {userBusinessType} 추천 레시피
+            </h2>
+            <Link
+              href="/recipes"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              전체보기 →
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {recipes.slice(0, 4).map((recipe: any) => (
+              <RecipeCard key={recipe.recipe_id} recipe={recipe} />
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* 프로필 미완성 안내 */}
       {(!userRegion || !userBusinessType) && (
         <Card className="p-6 bg-blue-50 border-blue-200">
@@ -244,6 +279,25 @@ function RecommendedProductCard({ item }: { item: any }) {
         <p className="text-xs text-gray-600 mb-2">{item.category}</p>
         <p className="text-xs text-gray-500">
           구매 {item.purchase_count}건
+        </p>
+      </Card>
+    </Link>
+  );
+}
+
+function RecipeCard({ recipe }: { recipe: any }) {
+  return (
+    <Link href={`/recipes/${recipe.recipe_id}`}>
+      <Card className="p-4 hover:shadow-lg transition-shadow">
+        <div className="flex items-start justify-between mb-2">
+          <p className="font-medium text-sm">{recipe.recipe_name}</p>
+          <span className="text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded">
+            레시피
+          </span>
+        </div>
+        <p className="text-xs text-gray-600 mb-2">{recipe.category}</p>
+        <p className="text-xs text-gray-500">
+          {recipe.servings}인분
         </p>
       </Card>
     </Link>

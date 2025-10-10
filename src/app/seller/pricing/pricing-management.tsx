@@ -111,6 +111,11 @@ function ProductPricingCard({
     markup_percentage: pricing?.markup_percentage || 0,
   });
 
+  // 정책 제한
+  const MAX_DISCOUNT_PERCENTAGE = 50; // 최대 할인율 50%
+  const MAX_MARKUP_PERCENTAGE = 100;  // 최대 인상률 100%
+  const MIN_FINAL_PRICE = 100;        // 최소 판매가 100원
+
   const calculateFinalPrice = () => {
     let price = formData.base_price * (1 + formData.markup_percentage / 100);
     if (formData.discount_type === "percentage") {
@@ -122,6 +127,23 @@ function ProductPricingCard({
   };
 
   const handleSave = async () => {
+    // 정책 검증
+    if (formData.discount_type === "percentage" && formData.discount_value > MAX_DISCOUNT_PERCENTAGE) {
+      alert(`할인율은 최대 ${MAX_DISCOUNT_PERCENTAGE}%까지 가능합니다.`);
+      return;
+    }
+
+    if (formData.markup_percentage > MAX_MARKUP_PERCENTAGE) {
+      alert(`인상률은 최대 ${MAX_MARKUP_PERCENTAGE}%까지 가능합니다.`);
+      return;
+    }
+
+    const finalPrice = calculateFinalPrice();
+    if (finalPrice < MIN_FINAL_PRICE) {
+      alert(`최종 판매가는 최소 ${MIN_FINAL_PRICE}원 이상이어야 합니다.`);
+      return;
+    }
+
     setLoading(true);
 
     // Mock API call
@@ -172,10 +194,13 @@ function ProductPricingCard({
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">인상률 (%)</label>
+                <label className="block text-sm font-medium mb-1">
+                  인상률 (%) <span className="text-xs text-gray-500">최대 {MAX_MARKUP_PERCENTAGE}%</span>
+                </label>
                 <Input
                   type="number"
                   step="0.01"
+                  max={MAX_MARKUP_PERCENTAGE}
                   value={formData.markup_percentage}
                   onChange={(e) =>
                     setFormData({
@@ -206,10 +231,14 @@ function ProductPricingCard({
               <div>
                 <label className="block text-sm font-medium mb-1">
                   할인 {formData.discount_type === "percentage" ? "%" : "금액"}
+                  {formData.discount_type === "percentage" && (
+                    <span className="text-xs text-gray-500 ml-1">최대 {MAX_DISCOUNT_PERCENTAGE}%</span>
+                  )}
                 </label>
                 <Input
                   type="number"
                   step={formData.discount_type === "percentage" ? "0.01" : "1"}
+                  max={formData.discount_type === "percentage" ? MAX_DISCOUNT_PERCENTAGE : undefined}
                   value={formData.discount_value || 0}
                   onChange={(e) =>
                     setFormData({
