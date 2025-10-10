@@ -76,7 +76,7 @@ export function getDemoUser(persona: PersonaType) {
 export function getPersonaDisplayName(persona: PersonaType): string {
   switch (persona) {
     case "buyer":
-      return "구매자 (학교 영양사)";
+      return "구매자 (가게 사장님)";
     case "seller":
       return "판매자 (식자재 업체)";
     case "admin":
@@ -108,7 +108,7 @@ export function getPersonaIcon(persona: PersonaType): string {
 export function getPersonaDescription(persona: PersonaType): string {
   switch (persona) {
     case "buyer":
-      return "급식 식자재를 검색하고 구매합니다";
+      return "식자재를 검색하고 구매합니다";
     case "seller":
       return "식자재를 등록하고 주문을 관리합니다";
     case "admin":
