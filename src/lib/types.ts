@@ -42,6 +42,9 @@ export const ProfileUpdateSchema = z.object({
     .length(10, "법정동코드는 10자리여야 합니다")
     .optional()
     .nullable(),
+  region: z.string().min(1, "지역을 선택하세요").optional(),
+  business_type: z.string().min(1, "업종을 선택하세요").optional(),
+  store_name: z.string().min(1, "가게명을 입력하세요").optional(),
 });
 
 export type ProfileUpdateInput = z.infer<typeof ProfileUpdateSchema>;
@@ -135,11 +138,55 @@ export const ProductSearchSchema = z.object({
   category: z.string().optional(),
   minPrice: z.coerce.number().nonnegative().optional(),
   maxPrice: z.coerce.number().nonnegative().optional(),
+  sort: z
+    .enum(["price_asc", "price_desc", "sales_desc", "rating_desc", "recent"])
+    .optional()
+    .default("recent"),
+  region: z.string().optional(),
   page: z.coerce.number().int().positive().optional().default(1),
   limit: z.coerce.number().int().positive().max(100).optional().default(20),
 });
 
 export type ProductSearchParams = z.infer<typeof ProductSearchSchema>;
+
+// Pricing Management
+export const PricingSchema = z.object({
+  base_price: z.number().nonnegative("기본 단가는 0 이상이어야 합니다"),
+  discount_type: z.enum(["percentage", "fixed"]).optional().nullable(),
+  discount_value: z.number().nonnegative().optional().nullable(),
+  discount_start_date: z.string().optional().nullable(),
+  discount_end_date: z.string().optional().nullable(),
+  markup_percentage: z.number().nonnegative().optional().default(0),
+  markup_reason: z.string().optional().nullable(),
+});
+
+export type PricingInput = z.infer<typeof PricingSchema>;
+
+export const BatchPricingSchema = z.object({
+  product_ids: z.array(z.string().uuid()).min(1, "최소 1개 이상의 상품을 선택하세요"),
+  operation: z.enum(["discount", "markup"], {
+    message: "작업 유형을 선택하세요",
+  }),
+  value: z.number().nonnegative("값은 0 이상이어야 합니다"),
+  type: z.enum(["percentage", "fixed"]).optional(),
+});
+
+export type BatchPricingInput = z.infer<typeof BatchPricingSchema>;
+
+// Delivery Info
+export const DeliveryInfoSchema = z.object({
+  fee: z.number().nonnegative("배송비는 0 이상이어야 합니다"),
+  free_threshold: z.number().nonnegative().optional().nullable(),
+  avg_delivery_days: z.number().int().positive("배송 일수는 1 이상이어야 합니다"),
+  delivery_schedule: z
+    .object({
+      start: z.string().regex(/^\d{2}:\d{2}$/, "시간 형식이 올바르지 않습니다"),
+      end: z.string().regex(/^\d{2}:\d{2}$/, "시간 형식이 올바르지 않습니다"),
+    })
+    .optional(),
+});
+
+export type DeliveryInfoInput = z.infer<typeof DeliveryInfoSchema>;
 
 // Admin filters
 export const AdminOrderFilterSchema = z.object({
@@ -186,8 +233,25 @@ export interface ProductWithSeller {
   seller: {
     business_name: string | null;
     contact_phone: string | null;
+    delivery_info?: {
+      fee: number;
+      free_threshold: number | null;
+      avg_delivery_days: number;
+    };
+    business_hours?: {
+      day_of_week: number;
+      open_time: string;
+      close_time: string;
+    }[];
+    recent_sales?: number;
   };
   is_lowest_price?: boolean;
+  pricing?: {
+    base_price: number;
+    final_price: number;
+    discount_type: "percentage" | "fixed" | null;
+    discount_value: number | null;
+  };
 }
 
 // Recipe with items

@@ -26,6 +26,9 @@ export interface Database {
           address: string | null;
           location: unknown | null; // PostGIS geography(Point,4326)
           adm_cd: string | null; // 10-digit 법정동코드
+          region: string | null;
+          business_type: string | null;
+          store_name: string | null;
           created_at: string;
           updated_at: string;
           is_approved: boolean;
@@ -40,6 +43,9 @@ export interface Database {
           address?: string | null;
           location?: unknown | null;
           adm_cd?: string | null;
+          region?: string | null;
+          business_type?: string | null;
+          store_name?: string | null;
           created_at?: string;
           updated_at?: string;
           is_approved?: boolean;
@@ -54,6 +60,9 @@ export interface Database {
           address?: string | null;
           location?: unknown | null;
           adm_cd?: string | null;
+          region?: string | null;
+          business_type?: string | null;
+          store_name?: string | null;
           created_at?: string;
           updated_at?: string;
           is_approved?: boolean;
@@ -254,6 +263,105 @@ export interface Database {
           created_at?: string;
         };
       };
+      delivery_info: {
+        Row: {
+          id: string;
+          seller_id: string;
+          fee: number;
+          free_threshold: number | null;
+          avg_delivery_days: number;
+          delivery_schedule: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          seller_id: string;
+          fee?: number;
+          free_threshold?: number | null;
+          avg_delivery_days?: number;
+          delivery_schedule?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          seller_id?: string;
+          fee?: number;
+          free_threshold?: number | null;
+          avg_delivery_days?: number;
+          delivery_schedule?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      seller_business_hours: {
+        Row: {
+          id: string;
+          seller_id: string;
+          day_of_week: number;
+          open_time: string;
+          close_time: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          seller_id: string;
+          day_of_week: number;
+          open_time: string;
+          close_time: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          seller_id?: string;
+          day_of_week?: number;
+          open_time?: string;
+          close_time?: string;
+          created_at?: string;
+        };
+      };
+      product_pricing: {
+        Row: {
+          id: string;
+          product_id: string;
+          base_price: number;
+          discount_type: "percentage" | "fixed" | null;
+          discount_value: number | null;
+          discount_start_date: string | null;
+          discount_end_date: string | null;
+          markup_percentage: number;
+          markup_reason: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          product_id: string;
+          base_price: number;
+          discount_type?: "percentage" | "fixed" | null;
+          discount_value?: number | null;
+          discount_start_date?: string | null;
+          discount_end_date?: string | null;
+          markup_percentage?: number;
+          markup_reason?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          product_id?: string;
+          base_price?: number;
+          discount_type?: "percentage" | "fixed" | null;
+          discount_value?: number | null;
+          discount_start_date?: string | null;
+          discount_end_date?: string | null;
+          markup_percentage?: number;
+          markup_reason?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
     Views: {
       [_ in never]: never;
@@ -264,6 +372,45 @@ export interface Database {
           p_role: "customer" | "seller" | "admin";
         };
         Returns: void;
+      };
+      calculate_final_price: {
+        Args: {
+          p_base_price: number;
+          p_markup_percentage: number;
+          p_discount_type: string;
+          p_discount_value: number;
+        };
+        Returns: number;
+      };
+      get_seller_recent_sales: {
+        Args: {
+          p_seller_id: string;
+        };
+        Returns: number;
+      };
+      get_region_popular_products: {
+        Args: {
+          p_region: string;
+          p_limit?: number;
+        };
+        Returns: {
+          product_id: string;
+          product_name: string;
+          total_orders: number;
+          seller_business_name: string;
+        }[];
+      };
+      get_business_type_recommendations: {
+        Args: {
+          p_business_type: string;
+          p_limit?: number;
+        };
+        Returns: {
+          product_id: string;
+          product_name: string;
+          category: string;
+          purchase_count: number;
+        }[];
       };
     };
     Enums: {
