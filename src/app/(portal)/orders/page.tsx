@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { listOrders } from "@/server/actions/orders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -78,9 +79,11 @@ export default async function OrdersPage() {
                 첫 주문을 시작해보세요!
               </p>
             </div>
-            <Button variant="primary" onClick={() => (window.location.href = "/products")}>
-              상품 둘러보기
-            </Button>
+            <Link href="/products">
+              <Button variant="primary">
+                상품 둘러보기
+              </Button>
+            </Link>
           </div>
         </Card>
       </div>
@@ -212,16 +215,11 @@ export default async function OrdersPage() {
 
                   {/* Actions */}
                   <div className="flex gap-3 pt-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() =>
-                        (window.location.href = `/orders/${order.id}`)
-                      }
-                    >
-                      상세보기
-                    </Button>
+                    <Link href={`/orders/${order.id}`} className="flex-1">
+                      <Button variant="outline" size="sm" className="w-full">
+                        상세보기
+                      </Button>
+                    </Link>
                     {order.status === "pending" && (
                       <Button variant="danger" size="sm" className="flex-1">
                         주문 취소

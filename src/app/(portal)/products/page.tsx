@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { searchProducts } from "@/server/actions/products";
 import { ProductCardInteractive } from "@/components/product-card-interactive";
 import { SkeletonGrid } from "@/components/skeletons";
@@ -60,9 +61,11 @@ async function ProductsList({ searchParams }: { searchParams: SearchParams }) {
               검색 조건을 변경하거나 다른 카테고리를 선택해보세요.
             </p>
           </div>
-          <Button variant="outline" onClick={() => window.location.href = "/products"}>
-            검색 초기화
-          </Button>
+          <Link href="/products">
+            <Button variant="outline">
+              검색 초기화
+            </Button>
+          </Link>
         </div>
       </Card>
     );
@@ -114,27 +117,33 @@ async function ProductsList({ searchParams }: { searchParams: SearchParams }) {
       {/* Pagination - Simple version */}
       <div className="flex justify-center gap-2 pt-8">
         {Number(searchParams.page || 1) > 1 && (
-          <Button
-            variant="outline"
-            onClick={() => {
-              const params = new URLSearchParams(window.location.search);
-              params.set("page", String(Number(searchParams.page || 1) - 1));
-              window.location.href = `/products?${params.toString()}`;
-            }}
+          <Link
+            href={`/products?${new URLSearchParams({
+              ...(searchParams.q && { q: searchParams.q }),
+              ...(searchParams.category && { category: searchParams.category }),
+              ...(searchParams.minPrice && { minPrice: searchParams.minPrice }),
+              ...(searchParams.maxPrice && { maxPrice: searchParams.maxPrice }),
+              page: String(Number(searchParams.page || 1) - 1),
+            }).toString()}`}
           >
-            이전
-          </Button>
+            <Button variant="outline">
+              이전
+            </Button>
+          </Link>
         )}
-        <Button
-          variant="outline"
-          onClick={() => {
-            const params = new URLSearchParams(window.location.search);
-            params.set("page", String(Number(searchParams.page || 1) + 1));
-            window.location.href = `/products?${params.toString()}`;
-          }}
+        <Link
+          href={`/products?${new URLSearchParams({
+            ...(searchParams.q && { q: searchParams.q }),
+            ...(searchParams.category && { category: searchParams.category }),
+            ...(searchParams.minPrice && { minPrice: searchParams.minPrice }),
+            ...(searchParams.maxPrice && { maxPrice: searchParams.maxPrice }),
+            page: String(Number(searchParams.page || 1) + 1),
+          }).toString()}`}
         >
-          다음
-        </Button>
+          <Button variant="outline">
+            다음
+          </Button>
+        </Link>
       </div>
     </div>
   );
@@ -221,13 +230,11 @@ export default function ProductsPage({
             <Button type="submit" variant="primary">
               검색
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => (window.location.href = "/products")}
-            >
-              초기화
-            </Button>
+            <Link href="/products">
+              <Button type="button" variant="outline">
+                초기화
+              </Button>
+            </Link>
           </div>
 
           {/* Active Filters */}

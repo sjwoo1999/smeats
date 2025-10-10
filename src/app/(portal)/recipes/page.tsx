@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { browseRecipes } from "@/server/actions/recipes";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -103,12 +104,11 @@ export default async function RecipesPage() {
       {/* Recipes Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {recipes.map((recipe) => (
-          <Card
-            key={recipe.id}
-            variant="elevated"
-            className="group overflow-hidden cursor-pointer transition-all hover:shadow-lg"
-            onClick={() => (window.location.href = `/recipes/${recipe.id}`)}
-          >
+          <Link key={recipe.id} href={`/recipes/${recipe.id}`}>
+            <Card
+              variant="elevated"
+              className="group overflow-hidden cursor-pointer transition-all hover:shadow-lg"
+            >
             {/* Recipe Image */}
             <div className="relative aspect-video w-full overflow-hidden bg-neutral-100">
               {recipe.image_path ? (
@@ -176,19 +176,13 @@ export default async function RecipesPage() {
                 </div>
 
                 {/* Action Button */}
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    window.location.href = `/recipes/${recipe.id}`;
-                  }}
-                >
+                <Button variant="outline" className="w-full">
                   레시피 보기
                 </Button>
               </div>
             </CardContent>
-          </Card>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>
