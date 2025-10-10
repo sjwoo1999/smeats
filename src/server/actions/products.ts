@@ -56,7 +56,7 @@ export async function searchProducts(
         unit: p.unit,
         origin: "국내산",
         stock: p.stock,
-        image_path: p.image_url,
+        image_path: p.image_path,
         seller: {
           business_name: "테스트 판매자",
           contact_phone: "010-1234-5678",
@@ -148,7 +148,7 @@ export async function getProduct(id: string): Promise<ProductWithSeller | null> 
         unit: product.unit,
         origin: "국내산",
         stock: product.stock,
-        image_path: product.image_url,
+        image_path: product.image_path,
         seller: {
           business_name: "테스트 판매자",
           contact_phone: "010-1234-5678",

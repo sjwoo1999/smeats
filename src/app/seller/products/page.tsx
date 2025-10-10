@@ -35,9 +35,9 @@ export default function SellerProductsPage() {
         {products.map((product) => (
           <Card key={product.id} className="overflow-hidden">
             <div className="aspect-video relative overflow-hidden bg-bg-subtle">
-              {product.image_url && (
+              {product.image_path && (
                 <img
-                  src={product.image_url}
+                  src={product.image_path}
                   alt={product.name}
                   className="w-full h-full object-cover"
                 />

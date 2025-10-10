@@ -8,7 +8,7 @@ export const mockProducts = [
     unit: "kg",
     price: 15000,
     description: "신선한 국내산 돼지 삼겹살",
-    image_url: "https://images.unsplash.com/photo-1602470520998-f4a52199a3d6?w=400",
+    image_path: "https://images.unsplash.com/photo-1602470520998-f4a52199a3d6?w=400",
     stock: 100,
     min_order: 5,
     seller_id: "seller1",
@@ -21,7 +21,7 @@ export const mockProducts = [
     unit: "kg",
     price: 3500,
     description: "무농약 유기농 감자",
-    image_url: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400",
+    image_path: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400",
     stock: 200,
     min_order: 10,
     seller_id: "seller1",
@@ -34,7 +34,7 @@ export const mockProducts = [
     unit: "kg",
     price: 2500,
     description: "국내산 신선 양파",
-    image_url: "https://images.unsplash.com/photo-1587049352846-4a222e784720?w=400",
+    image_path: "https://images.unsplash.com/photo-1587049352846-4a222e784720?w=400",
     stock: 150,
     min_order: 10,
     seller_id: "seller2",
@@ -47,7 +47,7 @@ export const mockProducts = [
     unit: "kg",
     price: 4000,
     description: "유기농 인증 당근",
-    image_url: "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400",
+    image_path: "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400",
     stock: 120,
     min_order: 10,
     seller_id: "seller2",
@@ -60,7 +60,7 @@ export const mockProducts = [
     unit: "kg",
     price: 45000,
     description: "1등급 한우 국거리용",
-    image_url: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400",
+    image_path: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400",
     stock: 50,
     min_order: 3,
     seller_id: "seller1",
@@ -73,7 +73,7 @@ export const mockProducts = [
     unit: "kg",
     price: 3000,
     description: "국내산 대파",
-    image_url: "https://images.unsplash.com/photo-1629798956579-e658c8ca6e89?w=400",
+    image_path: "https://images.unsplash.com/photo-1629798956579-e658c8ca6e89?w=400",
     stock: 80,
     min_order: 5,
     seller_id: "seller2",
@@ -133,7 +133,7 @@ export const mockOrders = [
         product: {
           name: mockProducts[0].name,
           unit: mockProducts[0].unit,
-          image_path: mockProducts[0].image_url,
+          image_path: mockProducts[0].image_path,
         },
       },
     ],
@@ -156,7 +156,7 @@ export const mockOrders = [
         product: {
           name: mockProducts[4].name,
           unit: mockProducts[4].unit,
-          image_path: mockProducts[4].image_url,
+          image_path: mockProducts[4].image_path,
         },
       },
     ],
@@ -228,7 +228,7 @@ export const mockBuyerOrders = [
         product: {
           name: mockProducts[0].name,
           unit: mockProducts[0].unit,
-          image_path: mockProducts[0].image_url,
+          image_path: mockProducts[0].image_path,
         },
       },
     ],
@@ -253,7 +253,7 @@ export const mockBuyerOrders = [
         product: {
           name: mockProducts[4].name,
           unit: mockProducts[4].unit,
-          image_path: mockProducts[4].image_url,
+          image_path: mockProducts[4].image_path,
         },
       },
     ],
@@ -278,7 +278,7 @@ export const mockBuyerOrders = [
         product: {
           name: mockProducts[1].name,
           unit: mockProducts[1].unit,
-          image_path: mockProducts[1].image_url,
+          image_path: mockProducts[1].image_path,
         },
       },
       {
@@ -290,7 +290,7 @@ export const mockBuyerOrders = [
         product: {
           name: mockProducts[5].name,
           unit: mockProducts[5].unit,
-          image_path: mockProducts[5].image_url,
+          image_path: mockProducts[5].image_path,
         },
       },
     ],
@@ -320,7 +320,7 @@ export const mockSellerOrders = [
         product: {
           name: mockProducts[0].name,
           unit: mockProducts[0].unit,
-          image_path: mockProducts[0].image_url,
+          image_path: mockProducts[0].image_path,
         },
       },
     ],
@@ -346,7 +346,7 @@ export const mockSellerOrders = [
         product: {
           name: mockProducts[4].name,
           unit: mockProducts[4].unit,
-          image_path: mockProducts[4].image_url,
+          image_path: mockProducts[4].image_path,
         },
       },
     ],
@@ -372,7 +372,7 @@ export const mockSellerOrders = [
         product: {
           name: mockProducts[1].name,
           unit: mockProducts[1].unit,
-          image_path: mockProducts[1].image_url,
+          image_path: mockProducts[1].image_path,
         },
       },
       {
@@ -384,7 +384,7 @@ export const mockSellerOrders = [
         product: {
           name: mockProducts[5].name,
           unit: mockProducts[5].unit,
-          image_path: mockProducts[5].image_url,
+          image_path: mockProducts[5].image_path,
         },
       },
     ],
