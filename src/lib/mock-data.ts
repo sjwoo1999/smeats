@@ -85,7 +85,7 @@ export const mockRecipes = [
   {
     id: "1",
     name: "김치찌개",
-    description: "급식용 김치찌개 레시피 (100인분)",
+    description: "김치찌개 레시피 (100인분)",
     servings: 100,
     ingredients: [
       { product_id: "1", quantity: 3, unit: "kg", product_name: "국내산 돼지고기 (삼겹살)" },
@@ -100,7 +100,7 @@ export const mockRecipes = [
   {
     id: "2",
     name: "카레라이스",
-    description: "급식용 카레 레시피 (100인분)",
+    description: "카레 레시피 (100인분)",
     servings: 100,
     ingredients: [
       { product_id: "5", quantity: 5, unit: "kg", product_name: "한우 (국거리용)" },
@@ -168,7 +168,7 @@ export const mockUser = {
   email: "test@smeats.com",
   name: "테스트 사용자",
   role: "customer" as const,
-  organization: "테스트 학교",
+  organization: "테스트 식당",
   created_at: new Date().toISOString(),
 };
 
@@ -179,9 +179,9 @@ export const mockUsers = {
   buyer: {
     id: "buyer-demo-1",
     email: "demo-buyer@smeats.com",
-    name: "김영양",
+    name: "김사장",
     role: "buyer" as const,
-    organization: "서울 ○○초등학교",
+    organization: "맛있는 한식당",
     phone: "010-1234-5678",
     address: "서울시 강남구 테헤란로 123",
     created_at: new Date().toISOString(),
@@ -303,8 +303,8 @@ export const mockSellerOrders = [
     id: "seller-order-1",
     user_id: "buyer-demo-1",
     seller_id: "seller-demo-1",
-    buyer_name: "김영양",
-    buyer_organization: "서울 ○○초등학교",
+    buyer_name: "김사장",
+    buyer_organization: "맛있는 한식당",
     status: "pending" as const,
     total_amount: 150000,
     delivery_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -329,8 +329,8 @@ export const mockSellerOrders = [
     id: "seller-order-2",
     user_id: "buyer-demo-2",
     seller_id: "seller-demo-1",
-    buyer_name: "박급식",
-    buyer_organization: "부산 △△중학교",
+    buyer_name: "박사장",
+    buyer_organization: "부산 중식당",
     status: "preparing" as const,
     total_amount: 225000,
     delivery_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -355,8 +355,8 @@ export const mockSellerOrders = [
     id: "seller-order-3",
     user_id: "buyer-demo-3",
     seller_id: "seller-demo-1",
-    buyer_name: "최영양",
-    buyer_organization: "인천 □□고등학교",
+    buyer_name: "최사장",
+    buyer_organization: "인천 뷔페",
     status: "shipped" as const,
     total_amount: 95000,
     delivery_date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
