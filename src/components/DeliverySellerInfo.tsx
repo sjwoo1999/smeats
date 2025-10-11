@@ -32,7 +32,7 @@ export function DeliveryInfo({
       </div>
       {schedule && (
         <div className="flex items-center gap-2">
-          <span className="text-gray-600">🕐 배송 시간:</span>
+          <span className="text-gray-600">🕐 배송 가능 시간:</span>
           <span className="font-medium">
             {schedule.start} ~ {schedule.end}
           </span>

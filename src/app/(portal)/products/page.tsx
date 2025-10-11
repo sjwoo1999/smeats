@@ -19,6 +19,14 @@ interface SearchParams {
   page?: string;
 }
 
+const SORT_OPTIONS = [
+  { value: "recent", label: "최신순" },
+  { value: "price_asc", label: "낮은 가격순" },
+  { value: "price_desc", label: "높은 가격순" },
+  { value: "sales_desc", label: "판매량순" },
+  { value: "rating_desc", label: "평점순" },
+] as const;
+
 async function ProductsList({ searchParams }: { searchParams: SearchParams }) {
   const result = await searchProducts({
     q: searchParams.q,
@@ -75,7 +83,7 @@ async function ProductsList({ searchParams }: { searchParams: SearchParams }) {
 
   return (
     <div className="space-y-6">
-      {/* Results Info */}
+      {/* Results Info & Sort */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="space-y-1">
           <p className="text-sm text-text-secondary">
@@ -91,6 +99,37 @@ async function ProductsList({ searchParams }: { searchParams: SearchParams }) {
               <span className="font-medium">&ldquo;{searchParams.q}&rdquo;</span> 검색 결과
             </p>
           )}
+        </div>
+
+        {/* Sort Options */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-sm font-medium text-text">정렬:</span>
+          <div className="flex gap-2">
+            {SORT_OPTIONS.map((option) => {
+              const params = new URLSearchParams();
+              if (searchParams.q) params.set("q", searchParams.q);
+              if (searchParams.category) params.set("category", searchParams.category);
+              if (searchParams.minPrice) params.set("minPrice", searchParams.minPrice);
+              if (searchParams.maxPrice) params.set("maxPrice", searchParams.maxPrice);
+              params.set("sort", option.value);
+
+              const isActive = (searchParams.sort || "recent") === option.value;
+
+              return (
+                <Link
+                  key={option.value}
+                  href={`/products?${params.toString()}`}
+                  className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                    isActive
+                      ? "bg-primary text-white font-medium"
+                      : "bg-bg-subtle text-text-secondary hover:bg-bg-subtle-hover"
+                  }`}
+                >
+                  {option.label}
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </div>
 

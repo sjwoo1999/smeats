@@ -5,8 +5,10 @@ import { useCart } from "@/components/cart-provider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { QuantityInput } from "@/components/ui/quantity-input";
 import { useState } from "react";
 import Image from "next/image";
+import { DeliveryInfo, SellerInfo } from "@/components/DeliverySellerInfo";
 
 // Mock product detail - in real app, fetch from server action
 export default function ProductDetailPage() {
@@ -32,6 +34,22 @@ export default function ProductDetailPage() {
     seller: {
       business_name: "한우마트",
       contact_phone: "02-1234-5678",
+      rating: 4.8,
+      recent_sales: 156,
+      business_hours: [
+        { day_of_week: 1, open_time: "08:00", close_time: "20:00" },
+        { day_of_week: 2, open_time: "08:00", close_time: "20:00" },
+        { day_of_week: 3, open_time: "08:00", close_time: "20:00" },
+        { day_of_week: 4, open_time: "08:00", close_time: "20:00" },
+        { day_of_week: 5, open_time: "08:00", close_time: "20:00" },
+        { day_of_week: 6, open_time: "09:00", close_time: "18:00" },
+      ],
+    },
+    delivery: {
+      fee: 3000,
+      free_threshold: 50000,
+      avg_delivery_days: 1,
+      schedule: { start: "09:00", end: "18:00" },
     },
   };
 
@@ -129,43 +147,18 @@ export default function ProductDetailPage() {
           {/* Quantity Selector */}
           <div className="space-y-3">
             <label className="text-sm font-medium text-text">수량</label>
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="md"
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                disabled={quantity <= 1}
-              >
-                -
-              </Button>
-              <span className="w-20 text-center text-lg font-semibold">
-                {quantity} {product.unit}
-              </span>
-              <Button
-                variant="outline"
-                size="md"
-                onClick={() => setQuantity(quantity + 1)}
-                disabled={quantity >= product.stock}
-              >
-                +
-              </Button>
-            </div>
+            <QuantityInput
+              value={quantity}
+              onChange={setQuantity}
+              min={1}
+              max={product.stock}
+              unit={product.unit}
+              price={product.price}
+            />
             <p className="text-sm text-text-secondary">
               재고: {product.stock}{product.unit}
             </p>
           </div>
-
-          {/* Total Price */}
-          <Card className="bg-bg-subtle">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-lg font-medium text-text">총 금액</span>
-                <span className="text-2xl font-bold text-primary">
-                  {formatPrice(product.price * quantity)}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Actions */}
           <div className="flex gap-3">
@@ -183,24 +176,43 @@ export default function ProductDetailPage() {
             </Button>
           </div>
 
+          {/* Delivery Info */}
+          <Card className="bg-blue-50 border-blue-200">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <span>🚚</span>
+                <span>배송 정보</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DeliveryInfo
+                fee={product.delivery.fee}
+                freeThreshold={product.delivery.free_threshold}
+                avgDays={product.delivery.avg_delivery_days}
+                schedule={product.delivery.schedule}
+              />
+              <div className="mt-3 pt-3 border-t border-blue-200">
+                <p className="text-xs text-gray-600">
+                  💡 {product.delivery.free_threshold?.toLocaleString("ko-KR")}원 이상 구매 시
+                  배송비가 무료입니다!
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Seller Info */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">판매자 정보</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-text-secondary">상호명</span>
-                <span className="text-text font-medium">
-                  {product.seller.business_name}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-text-secondary">연락처</span>
-                <span className="text-text font-medium">
-                  {product.seller.contact_phone}
-                </span>
-              </div>
+            <CardContent>
+              <SellerInfo
+                businessName={product.seller.business_name}
+                contactPhone={product.seller.contact_phone}
+                rating={product.seller.rating}
+                recentSales={product.seller.recent_sales}
+                businessHours={product.seller.business_hours}
+              />
             </CardContent>
           </Card>
         </div>
