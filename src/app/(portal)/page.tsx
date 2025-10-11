@@ -2,7 +2,9 @@ import { redirect } from "next/navigation";
 import { getUserProfile } from "@/lib/supabase";
 import { createServerSupabaseClient } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +29,14 @@ interface RecommendedProduct {
   product_name: string;
   category: string;
   purchase_count: number;
+}
+
+interface Recipe {
+  id: string;
+  name: string;
+  description: string;
+  servings: number;
+  total_ingredients: number;
 }
 
 async function getMainContent(userId: string, profile: { region?: string | null; business_type?: string | null }) {
@@ -84,7 +94,30 @@ async function getMainContent(userId: string, profile: { region?: string | null;
     recommendations = data || [];
   }
 
-  return { recentProducts, nearbyPopular, recommendations };
+  // 업종별 추천 레시피
+  const { data: recipes } = await supabase
+    .from("recipes")
+    .select(
+      `
+      id,
+      name,
+      description,
+      servings,
+      recipe_ingredients (count)
+    `
+    )
+    .limit(3);
+
+  const recommendedRecipes: Recipe[] =
+    recipes?.map((recipe: { id: string; name: string; description: string; servings: number; recipe_ingredients: { count: number }[] }) => ({
+      id: recipe.id,
+      name: recipe.name,
+      description: recipe.description,
+      servings: recipe.servings,
+      total_ingredients: recipe.recipe_ingredients?.[0]?.count || 0,
+    })) || [];
+
+  return { recentProducts, nearbyPopular, recommendations, recommendedRecipes };
 }
 
 export default async function MainPage() {
@@ -103,10 +136,8 @@ export default async function MainPage() {
     redirect("/admin");
   }
 
-  const { recentProducts, nearbyPopular, recommendations } = await getMainContent(
-    profile.id,
-    profile
-  );
+  const { recentProducts, nearbyPopular, recommendations, recommendedRecipes } =
+    await getMainContent(profile.id, profile);
 
   // 프로필 완성도 체크
   const isProfileComplete =
@@ -169,17 +200,39 @@ export default async function MainPage() {
               <Link
                 key={product.id}
                 href={`/products/${product.id}`}
-                className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                className="group border rounded-lg overflow-hidden hover:shadow-lg transition-all"
               >
-                {product.image_path && (
-                  <div className="aspect-square bg-gray-100 rounded-md mb-2" />
-                )}
-                <h3 className="font-medium text-sm line-clamp-2">
-                  {product.name}
-                </h3>
-                <p className="text-sm text-gray-600 mt-1">
-                  ₩{product.price.toLocaleString()}/{product.unit}
-                </p>
+                <div className="relative aspect-square bg-gray-100">
+                  {product.image_path ? (
+                    <Image
+                      src={product.image_path}
+                      alt={product.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      <span className="text-4xl">🛒</span>
+                    </div>
+                  )}
+                  <Badge
+                    variant="default"
+                    className="absolute top-2 left-2 bg-blue-600 text-white"
+                  >
+                    {product.category}
+                  </Badge>
+                </div>
+                <div className="p-3">
+                  <h3 className="font-medium text-sm line-clamp-2 mb-2">
+                    {product.name}
+                  </h3>
+                  <p className="text-lg font-bold text-primary">
+                    ₩{product.price.toLocaleString()}
+                    <span className="text-xs text-gray-500 font-normal ml-1">
+                      /{product.unit}
+                    </span>
+                  </p>
+                </div>
               </Link>
             ))}
           </div>
@@ -202,21 +255,29 @@ export default async function MainPage() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {nearbyPopular.map((item) => (
-              <Link
+              <Card
                 key={item.product_id}
-                href={`/products/${item.product_id}`}
-                className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                className="group hover:shadow-lg transition-all cursor-pointer"
               >
-                <h3 className="font-medium text-sm line-clamp-2">
-                  {item.product_name}
-                </h3>
-                <p className="text-xs text-gray-500 mt-1">
-                  {item.seller_business_name}
-                </p>
-                <p className="text-xs text-blue-600 mt-2">
-                  🔥 {item.total_orders}명이 구매
-                </p>
-              </Link>
+                <Link href={`/products/${item.product_id}`}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <Badge variant="secondary" className="text-xs">
+                        인기
+                      </Badge>
+                      <span className="text-xs text-red-600 font-medium">
+                        🔥 {item.total_orders}
+                      </span>
+                    </div>
+                    <h3 className="font-medium text-sm line-clamp-2 mb-2">
+                      {item.product_name}
+                    </h3>
+                    <p className="text-xs text-gray-500">
+                      {item.seller_business_name}
+                    </p>
+                  </CardContent>
+                </Link>
+              </Card>
             ))}
           </div>
         </section>
@@ -238,21 +299,75 @@ export default async function MainPage() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {recommendations.map((item) => (
-              <Link
+              <Card
                 key={item.product_id}
-                href={`/products/${item.product_id}`}
-                className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                className="group hover:shadow-lg transition-all cursor-pointer"
               >
-                <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded mb-2">
-                  {item.category}
-                </span>
-                <h3 className="font-medium text-sm line-clamp-2">
-                  {item.product_name}
-                </h3>
-                <p className="text-xs text-gray-500 mt-2">
-                  같은 업종 {item.purchase_count}회 구매
-                </p>
-              </Link>
+                <Link href={`/products/${item.product_id}`}>
+                  <CardContent className="p-4">
+                    <Badge variant="info" className="mb-2">
+                      {item.category}
+                    </Badge>
+                    <h3 className="font-medium text-sm line-clamp-2 mb-2">
+                      {item.product_name}
+                    </h3>
+                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <span>👥</span>
+                      <span>같은 업종 {item.purchase_count}회 구매</span>
+                    </div>
+                  </CardContent>
+                </Link>
+              </Card>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 업종별 추천 레시피 */}
+      {recommendedRecipes.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold">
+              👨‍🍳 {profile.business_type ? `${profile.business_type}를 위한` : ""}{" "}
+              추천 레시피
+            </h2>
+            <Link
+              href="/recipes"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              레시피 전체 보기 →
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {recommendedRecipes.map((recipe) => (
+              <Card
+                key={recipe.id}
+                className="hover:shadow-lg transition-all cursor-pointer"
+              >
+                <Link href={`/recipes/${recipe.id}`}>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <span>📋</span>
+                      <span className="line-clamp-1">{recipe.name}</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+                      {recipe.description || "맛있는 레시피를 확인해보세요"}
+                    </p>
+                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <span className="flex items-center gap-1">
+                        <span>👥</span>
+                        <span>{recipe.servings}인분</span>
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <span>🥘</span>
+                        <span>{recipe.total_ingredients}가지 재료</span>
+                      </span>
+                    </div>
+                  </CardContent>
+                </Link>
+              </Card>
             ))}
           </div>
         </section>
