@@ -262,7 +262,7 @@ export default async function MainPage() {
                 <Link href={`/products/${item.product_id}`}>
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-2">
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="default" className="text-xs">
                         인기
                       </Badge>
                       <span className="text-xs text-red-600 font-medium">
