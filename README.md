@@ -115,6 +115,7 @@ cp .env.local.example .env.local
 # Supabase SQL Editor에서 실행:
 # - db/040_storage_policies.sql
 # - db/050_rpc_functions.sql
+# - db/060_buyer_seller_enhancements.sql  # 구매자/판매자 기능 확장
 
 # 4. Edge Function 배포
 npm install -g supabase
