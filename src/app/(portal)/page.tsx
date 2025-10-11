@@ -103,18 +103,18 @@ async function getMainContent(userId: string, profile: { region?: string | null;
       name,
       description,
       servings,
-      recipe_ingredients (count)
+      recipe_ingredients (id)
     `
     )
     .limit(3);
 
   const recommendedRecipes: Recipe[] =
-    recipes?.map((recipe: { id: string; name: string; description: string; servings: number; recipe_ingredients: { count: number }[] }) => ({
+    recipes?.map((recipe: { id: string; name: string; description: string; servings: number; recipe_ingredients: { id: string }[] }) => ({
       id: recipe.id,
       name: recipe.name,
       description: recipe.description,
       servings: recipe.servings,
-      total_ingredients: recipe.recipe_ingredients?.[0]?.count || 0,
+      total_ingredients: recipe.recipe_ingredients?.length || 0,
     })) || [];
 
   return { recentProducts, nearbyPopular, recommendations, recommendedRecipes };
