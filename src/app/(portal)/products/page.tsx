@@ -25,7 +25,7 @@ async function ProductsList({ searchParams }: { searchParams: SearchParams }) {
     category: searchParams.category,
     minPrice: searchParams.minPrice ? Number(searchParams.minPrice) : undefined,
     maxPrice: searchParams.maxPrice ? Number(searchParams.maxPrice) : undefined,
-    sort: (searchParams.sort as any) || "recent",
+    sort: (searchParams.sort as "price_asc" | "price_desc" | "sales_desc" | "rating_desc" | "recent") || "recent",
     page: searchParams.page ? Number(searchParams.page) : 1,
     limit: 20,
   });

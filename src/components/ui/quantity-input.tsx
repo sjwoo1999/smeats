@@ -10,7 +10,6 @@ interface QuantityInputProps {
   min?: number;
   max?: number;
   unit: string;
-  mode?: "recipe" | "order";
   price?: number;
   className?: string;
 }
@@ -21,7 +20,6 @@ export function QuantityInput({
   min = 1,
   max = 9999,
   unit,
-  mode = "order",
   price,
   className = "",
 }: QuantityInputProps) {

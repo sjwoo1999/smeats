@@ -99,7 +99,7 @@ export function ProductFilter() {
               {["채소", "과일", "육류", "수산물", "유제품"].map((cat) => (
                 <Button
                   key={cat}
-                  variant={currentCategory === cat ? "default" : "outline"}
+                  variant={currentCategory === cat ? "primary" : "outline"}
                   size="sm"
                   onClick={() =>
                     handleCategoryChange(currentCategory === cat ? "" : cat)

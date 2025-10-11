@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import ProductFilter, { SortOption } from "@/components/ProductFilter";
 import { DeliveryInfo, SellerInfo } from "@/components/DeliverySellerInfo";

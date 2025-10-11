@@ -99,7 +99,6 @@ function ProductPricingCard({
   isSelected: boolean;
   onToggle: () => void;
 }) {
-  const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
 

@@ -118,6 +118,7 @@ export async function calculateRecipe(
 
     // Get all available products (no filters, just in-stock)
     const productsResult = await searchProducts({
+      sort: "recent",
       page: 1,
       limit: 1000, // Get all products for matching
     });

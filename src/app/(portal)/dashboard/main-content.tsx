@@ -17,15 +17,36 @@ interface MainContentProps {
   userBusinessType?: string;
 }
 
+interface PopularProduct {
+  product_id: string;
+  product_name: string;
+  total_orders: number;
+  seller_business_name: string;
+}
+
+interface RecommendedProduct {
+  product_id: string;
+  product_name: string;
+  category: string;
+  purchase_count: number;
+}
+
+interface Recipe {
+  recipe_id: string;
+  recipe_name: string;
+  category: string;
+  servings: number;
+}
+
 export default function MainContent({
   userId,
   userRegion,
   userBusinessType,
 }: MainContentProps) {
   const [recentPurchases, setRecentPurchases] = useState<Product[]>([]);
-  const [nearbyPopular, setNearbyPopular] = useState<any[]>([]);
-  const [recommendations, setRecommendations] = useState<any[]>([]);
-  const [recipes, setRecipes] = useState<any[]>([]);
+  const [nearbyPopular, setNearbyPopular] = useState<PopularProduct[]>([]);
+  const [recommendations, setRecommendations] = useState<RecommendedProduct[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -146,7 +167,7 @@ export default function MainContent({
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {nearbyPopular.slice(0, 4).map((item: any) => (
+            {nearbyPopular.slice(0, 4).map((item) => (
               <PopularProductCard key={item.product_id} item={item} />
             ))}
           </div>
@@ -168,7 +189,7 @@ export default function MainContent({
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {recommendations.slice(0, 4).map((item: any) => (
+            {recommendations.slice(0, 4).map((item) => (
               <RecommendedProductCard key={item.product_id} item={item} />
             ))}
           </div>
@@ -190,7 +211,7 @@ export default function MainContent({
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {recipes.slice(0, 4).map((recipe: any) => (
+            {recipes.slice(0, 4).map((recipe) => (
               <RecipeCard key={recipe.recipe_id} recipe={recipe} />
             ))}
           </div>
@@ -222,6 +243,7 @@ function ProductQuickCard({ product }: { product: Product }) {
       <Card className="overflow-hidden hover:shadow-lg transition-shadow">
         <div className="aspect-square bg-gray-100 relative">
           {product.image_path ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={product.image_path}
               alt={product.name}
@@ -247,7 +269,7 @@ function ProductQuickCard({ product }: { product: Product }) {
   );
 }
 
-function PopularProductCard({ item }: { item: any }) {
+function PopularProductCard({ item }: { item: PopularProduct }) {
   return (
     <Link href={`/products/${item.product_id}`}>
       <Card className="p-4 hover:shadow-lg transition-shadow">
@@ -266,7 +288,7 @@ function PopularProductCard({ item }: { item: any }) {
   );
 }
 
-function RecommendedProductCard({ item }: { item: any }) {
+function RecommendedProductCard({ item }: { item: RecommendedProduct }) {
   return (
     <Link href={`/products/${item.product_id}`}>
       <Card className="p-4 hover:shadow-lg transition-shadow">
@@ -285,7 +307,7 @@ function RecommendedProductCard({ item }: { item: any }) {
   );
 }
 
-function RecipeCard({ recipe }: { recipe: any }) {
+function RecipeCard({ recipe }: { recipe: Recipe }) {
   return (
     <Link href={`/recipes/${recipe.recipe_id}`}>
       <Card className="p-4 hover:shadow-lg transition-shadow">
