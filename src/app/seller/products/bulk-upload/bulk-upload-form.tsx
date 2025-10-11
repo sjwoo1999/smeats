@@ -114,17 +114,46 @@ export default function BulkUploadForm() {
       return;
     }
 
+    const confirmed = confirm(
+      `${validProducts.length}개의 상품을 등록하시겠습니까?\n\n등록 후에는 개별적으로 수정할 수 있습니다.`
+    );
+
+    if (!confirmed) return;
+
     setLoading(true);
 
-    // Mock API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const response = await fetch("/api/seller/products/bulk-upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ products: validProducts }),
+      });
 
-    console.log("일괄 등록 (목업):", validProducts);
-    alert(
-      `${validProducts.length}개 상품이 등록되었습니다. (목업 모드)\n\n실제 데이터베이스에는 저장되지 않았습니다.`
-    );
-    setUploaded(true);
-    setLoading(false);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "일괄 등록 실패");
+      }
+
+      const result = await response.json();
+
+      alert(
+        `✅ ${result.successCount || validProducts.length}개 상품이 등록되었습니다!${
+          result.failedCount > 0
+            ? `\n⚠️ ${result.failedCount}개 상품 등록 실패`
+            : ""
+        }`
+      );
+      setUploaded(true);
+    } catch (error) {
+      console.error("일괄 등록 오류:", error);
+      alert(
+        `❌ 일괄 등록에 실패했습니다.\n\n${
+          error instanceof Error ? error.message : "알 수 없는 오류"
+        }`
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const downloadTemplate = () => {

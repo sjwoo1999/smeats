@@ -6,6 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+// 가격 조정 정책 설정
+const PRICING_POLICY = {
+  MAX_DISCOUNT_PERCENTAGE: 50, // 최대 할인율 50%
+  MAX_MARKUP_PERCENTAGE: 100, // 최대 인상률 100%
+  APPROVAL_THRESHOLD: {
+    discount: 30, // 30% 이상 할인 시 관리자 승인 필요
+    markup: 50, // 50% 이상 인상 시 관리자 승인 필요
+  },
+} as const;
+
 interface Product {
   id: string;
   name: string;
@@ -53,8 +63,65 @@ export function PricingForm({ product }: PricingFormProps) {
     return Math.floor(Math.max(price, 0));
   };
 
+  const validatePricing = () => {
+    const warnings: string[] = [];
+    const errors: string[] = [];
+
+    // 할인율 검증
+    if (
+      formData.discount_type === "percentage" &&
+      formData.discount_value > 0
+    ) {
+      if (formData.discount_value > PRICING_POLICY.MAX_DISCOUNT_PERCENTAGE) {
+        errors.push(
+          `할인율은 최대 ${PRICING_POLICY.MAX_DISCOUNT_PERCENTAGE}%까지 가능합니다.`
+        );
+      } else if (
+        formData.discount_value >= PRICING_POLICY.APPROVAL_THRESHOLD.discount
+      ) {
+        warnings.push(
+          `${formData.discount_value}% 할인은 관리자 승인이 필요할 수 있습니다.`
+        );
+      }
+    }
+
+    // 인상률 검증
+    if (formData.markup_percentage > 0) {
+      if (formData.markup_percentage > PRICING_POLICY.MAX_MARKUP_PERCENTAGE) {
+        errors.push(
+          `인상률은 최대 ${PRICING_POLICY.MAX_MARKUP_PERCENTAGE}%까지 가능합니다.`
+        );
+      } else if (
+        formData.markup_percentage >= PRICING_POLICY.APPROVAL_THRESHOLD.markup
+      ) {
+        warnings.push(
+          `${formData.markup_percentage}% 인상은 관리자 승인이 필요할 수 있습니다.`
+        );
+      }
+    }
+
+    return { warnings, errors };
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const { warnings, errors } = validatePricing();
+
+    // 에러가 있으면 제출 중단
+    if (errors.length > 0) {
+      alert(errors.join("\n"));
+      return;
+    }
+
+    // 경고가 있으면 사용자에게 확인
+    if (warnings.length > 0) {
+      const confirmed = confirm(
+        `다음 경고사항을 확인하세요:\n\n${warnings.join("\n")}\n\n계속 진행하시겠습니까?`
+      );
+      if (!confirmed) return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -82,9 +149,57 @@ export function PricingForm({ product }: PricingFormProps) {
   };
 
   const finalPrice = calculateFinalPrice();
+  const { warnings, errors } = validatePricing();
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* 정책 안내 */}
+      <Card className="bg-blue-50 border-blue-200">
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <span>ℹ️</span>
+            <span>가격 조정 정책</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm text-gray-700">
+          <p>• 최대 할인율: {PRICING_POLICY.MAX_DISCOUNT_PERCENTAGE}%</p>
+          <p>• 최대 인상률: {PRICING_POLICY.MAX_MARKUP_PERCENTAGE}%</p>
+          <p className="text-xs text-gray-600 mt-2">
+            ⚠️ 할인율 {PRICING_POLICY.APPROVAL_THRESHOLD.discount}% 이상 또는
+            인상률 {PRICING_POLICY.APPROVAL_THRESHOLD.markup}% 이상 시 관리자
+            승인이 필요할 수 있습니다.
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* 실시간 검증 피드백 */}
+      {(errors.length > 0 || warnings.length > 0) && (
+        <Card
+          className={
+            errors.length > 0
+              ? "bg-red-50 border-red-200"
+              : "bg-yellow-50 border-yellow-200"
+          }
+        >
+          <CardContent className="pt-4">
+            <div className="space-y-2">
+              {errors.map((error, idx) => (
+                <p key={idx} className="text-sm text-red-700 flex items-start gap-2">
+                  <span>❌</span>
+                  <span>{error}</span>
+                </p>
+              ))}
+              {warnings.map((warning, idx) => (
+                <p key={idx} className="text-sm text-yellow-700 flex items-start gap-2">
+                  <span>⚠️</span>
+                  <span>{warning}</span>
+                </p>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle>기본 단가</CardTitle>
@@ -114,7 +229,9 @@ export function PricingForm({ product }: PricingFormProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">인상률 (%)</label>
+            <label className="block text-sm font-medium mb-2">
+              인상률 (%) - 최대 {PRICING_POLICY.MAX_MARKUP_PERCENTAGE}%
+            </label>
             <Input
               type="number"
               value={formData.markup_percentage}
@@ -125,6 +242,7 @@ export function PricingForm({ product }: PricingFormProps) {
                 })
               }
               min={0}
+              max={PRICING_POLICY.MAX_MARKUP_PERCENTAGE}
               step={0.1}
             />
           </div>
@@ -163,7 +281,11 @@ export function PricingForm({ product }: PricingFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">할인 값</label>
+            <label className="block text-sm font-medium mb-2">
+              할인 값
+              {formData.discount_type === "percentage" &&
+                ` - 최대 ${PRICING_POLICY.MAX_DISCOUNT_PERCENTAGE}%`}
+            </label>
             <Input
               type="number"
               value={formData.discount_value}
@@ -174,6 +296,11 @@ export function PricingForm({ product }: PricingFormProps) {
                 })
               }
               min={0}
+              max={
+                formData.discount_type === "percentage"
+                  ? PRICING_POLICY.MAX_DISCOUNT_PERCENTAGE
+                  : undefined
+              }
               step={0.1}
             />
           </div>
