@@ -17,6 +17,15 @@ interface NavLink {
 // Buyer navigation links
 const buyerNavLinks: NavLink[] = [
   {
+    href: "/",
+    label: "홈",
+    icon: (
+      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg>
+    ),
+  },
+  {
     href: "/products",
     label: "상품",
     icon: (
@@ -146,11 +155,11 @@ export function Navigation() {
     persona === "admin" ? adminNavLinks :
     buyerNavLinks;
 
-  // Logo href based on persona
+  // Logo href based on persona (home page)
   const logoHref =
     persona === "seller" ? "/seller/dashboard" :
     persona === "admin" ? "/admin/dashboard" :
-    "/dashboard";
+    "/";
 
   // Calculate total cart items
   const cartItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -199,26 +208,28 @@ export function Navigation() {
           {/* User Menu & Mobile Toggle */}
           <div className="flex items-center gap-3">
             {/* User Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hidden md:flex items-center gap-2"
-            >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <Link href="/mypage">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hidden md:flex items-center gap-2"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-              마이페이지
-            </Button>
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                마이페이지
+              </Button>
+            </Link>
 
             {/* Mobile Menu Button */}
             <button
@@ -284,7 +295,7 @@ export function Navigation() {
               })}
               <div className="border-t border-border my-2" />
               <Link
-                href="/dashboard"
+                href="/mypage"
                 className="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-text hover:text-primary hover:bg-bg-muted transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
