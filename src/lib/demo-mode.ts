@@ -42,7 +42,7 @@ export function getDemoPersona(): PersonaType | null {
 }
 
 /**
- * Set demo persona in localStorage
+ * Set demo persona in localStorage and cookie
  */
 export function setDemoPersona(persona: PersonaType): void {
   if (typeof window === "undefined") {
@@ -50,10 +50,12 @@ export function setDemoPersona(persona: PersonaType): void {
   }
 
   localStorage.setItem("demo_persona", persona);
+  // Also set in cookie for server-side access
+  document.cookie = `demo_persona=${persona}; path=/; max-age=31536000`; // 1 year
 }
 
 /**
- * Clear demo persona from localStorage
+ * Clear demo persona from localStorage and cookie
  */
 export function clearDemoPersona(): void {
   if (typeof window === "undefined") {
@@ -61,6 +63,8 @@ export function clearDemoPersona(): void {
   }
 
   localStorage.removeItem("demo_persona");
+  // Clear cookie
+  document.cookie = "demo_persona=; path=/; max-age=0";
 }
 
 /**

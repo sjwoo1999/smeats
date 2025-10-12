@@ -2,7 +2,7 @@ import { createBrowserClient } from "@supabase/ssr";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { Database } from "./database.types";
-import { mockUser } from "./mock-data";
+import { mockUsers, type PersonaType } from "./mock-data";
 
 // Environment variables with fallback for build time
 const supabaseUrl: string = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -97,6 +97,12 @@ export function createAdminClient() {
  */
 export async function getCurrentUser() {
   if (USE_MOCK_DATA) {
+    // Get persona from cookie
+    const cookieStore = await cookies();
+    const personaCookie = cookieStore.get("demo_persona");
+    const persona = (personaCookie?.value as PersonaType) || "buyer";
+    const mockUser = mockUsers[persona];
+
     // Return mock user in development mode
     return {
       id: mockUser.id,
@@ -130,21 +136,65 @@ export async function getCurrentUser() {
  */
 export async function getUserProfile(): Promise<Database["public"]["Tables"]["profiles"]["Row"] | null> {
   if (USE_MOCK_DATA) {
-    // Return mock profile with buyer fields
-    return {
-      id: mockUser.id,
-      email: mockUser.email,
-      role: mockUser.role,
-      business_name: mockUser.organization,
-      contact_phone: "010-1234-5678",
-      location: null,
-      region: "서울시 강남구",
-      business_type: "한식당",
-      store_name: "맛있는 한식당",
-      created_at: mockUser.created_at,
-      updated_at: mockUser.created_at,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any;
+    // Get persona from cookie
+    const cookieStore = await cookies();
+    const personaCookie = cookieStore.get("demo_persona");
+    const persona = (personaCookie?.value as PersonaType) || "buyer";
+    const mockUser = mockUsers[persona];
+
+    // Return persona-specific mock profile
+    if (persona === "seller") {
+      const sellerUser = mockUser as typeof mockUsers.seller;
+      return {
+        id: sellerUser.id,
+        email: sellerUser.email,
+        role: "seller",
+        business_name: sellerUser.business_name || "신선마트",
+        contact_phone: sellerUser.contact_phone || "010-9876-5432",
+        address: sellerUser.address || "서울시 송파구 송파대로 456",
+        location: null,
+        region: null,
+        business_type: null,
+        store_name: null,
+        created_at: sellerUser.created_at,
+        updated_at: sellerUser.created_at,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any;
+    } else if (persona === "admin") {
+      return {
+        id: mockUser.id,
+        email: mockUser.email,
+        role: "admin",
+        business_name: "SMEats 운영팀",
+        contact_phone: "02-1234-5678",
+        address: "서울시 강남구 테헤란로 123",
+        location: null,
+        region: null,
+        business_type: null,
+        store_name: null,
+        created_at: mockUser.created_at,
+        updated_at: mockUser.created_at,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any;
+    } else {
+      // buyer/customer
+      const buyerUser = mockUser as typeof mockUsers.buyer;
+      return {
+        id: buyerUser.id,
+        email: buyerUser.email,
+        role: "customer",
+        business_name: buyerUser.organization,
+        contact_phone: buyerUser.phone || "010-1234-5678",
+        address: buyerUser.address || "서울시 강남구 테헤란로 123",
+        location: null,
+        region: buyerUser.region || "서울시 강남구",
+        business_type: buyerUser.business_type || "한식당",
+        store_name: buyerUser.store_name || "맛있는 한식당",
+        created_at: buyerUser.created_at,
+        updated_at: buyerUser.created_at,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any;
+    }
   }
 
   const user = await getCurrentUser();
