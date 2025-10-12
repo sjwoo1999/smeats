@@ -255,7 +255,7 @@ export const mockUsers = {
     role: "seller" as const,
     business_name: "신선마트",
     business_registration: "123-45-67890",
-    phone: "010-9876-5432",
+    contact_phone: "010-9876-5432",
     address: "서울시 송파구 송파대로 456",
     created_at: new Date().toISOString(),
   },

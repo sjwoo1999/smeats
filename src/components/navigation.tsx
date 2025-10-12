@@ -208,7 +208,7 @@ export function Navigation() {
           {/* User Menu & Mobile Toggle */}
           <div className="flex items-center gap-3">
             {/* User Button */}
-            <Link href="/mypage">
+            <Link href={persona === "seller" ? "/seller/mypage" : "/mypage"}>
               <Button
                 variant="ghost"
                 size="sm"
@@ -295,7 +295,7 @@ export function Navigation() {
               })}
               <div className="border-t border-border my-2" />
               <Link
-                href="/mypage"
+                href={persona === "seller" ? "/seller/mypage" : "/mypage"}
                 className="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-text hover:text-primary hover:bg-bg-muted transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
