@@ -366,11 +366,11 @@ export const mockSellerOrders = [
     user_id: "buyer-demo-1",
     seller_id: "seller-demo-1",
     buyer_name: "김사장",
-    buyer_organization: "맛있는 한식당",
+    buyer_organization: "서울특별시 성북구",
     status: "pending" as const,
     total_amount: 150000,
     delivery_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    delivery_address: "서울시 강남구 테헤란로 123",
+    delivery_address: "서울특별시 성북구 동소문로 789",
     created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     items: [
       {
@@ -392,11 +392,11 @@ export const mockSellerOrders = [
     user_id: "buyer-demo-2",
     seller_id: "seller-demo-1",
     buyer_name: "박사장",
-    buyer_organization: "부산 중식당",
+    buyer_organization: "서울특별시 성북구",
     status: "preparing" as const,
     total_amount: 225000,
     delivery_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    delivery_address: "부산시 해운대구 해운대로 789",
+    delivery_address: "서울특별시 성북구 정릉로 123",
     created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     items: [
       {
@@ -418,11 +418,11 @@ export const mockSellerOrders = [
     user_id: "buyer-demo-3",
     seller_id: "seller-demo-1",
     buyer_name: "최사장",
-    buyer_organization: "인천 뷔페",
+    buyer_organization: "서울특별시 성북구",
     status: "shipped" as const,
     total_amount: 95000,
     delivery_date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    delivery_address: "인천시 남동구 인주대로 321",
+    delivery_address: "서울특별시 성북구 보문로 456",
     created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     items: [
       {
