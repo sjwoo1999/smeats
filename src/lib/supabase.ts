@@ -130,7 +130,7 @@ export async function getCurrentUser() {
  */
 export async function getUserProfile(): Promise<Database["public"]["Tables"]["profiles"]["Row"] | null> {
   if (USE_MOCK_DATA) {
-    // Return mock profile
+    // Return mock profile with buyer fields
     return {
       id: mockUser.id,
       email: mockUser.email,
@@ -138,6 +138,9 @@ export async function getUserProfile(): Promise<Database["public"]["Tables"]["pr
       business_name: mockUser.organization,
       contact_phone: "010-1234-5678",
       location: null,
+      region: "서울시 강남구",
+      business_type: "한식당",
+      store_name: "맛있는 한식당",
       created_at: mockUser.created_at,
       updated_at: mockUser.created_at,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

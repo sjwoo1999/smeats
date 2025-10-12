@@ -1,26 +1,11 @@
 import { redirect } from "next/navigation";
-import { createServerSupabaseClient } from "@/lib/supabase";
+import { getUserProfile } from "@/lib/supabase";
 import { ProfileForm } from "./profile-form";
 
 export default async function MyPage() {
-  const supabase = await createServerSupabaseClient();
+  const profile = await getUserProfile();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
-  const { data: profile, error } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-
-  if (error || !profile) {
-    console.error("Profile fetch error:", error);
+  if (!profile) {
     redirect("/login");
   }
 
