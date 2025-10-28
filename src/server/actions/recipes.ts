@@ -43,7 +43,7 @@ export async function getRecipes(): Promise<RecipeWithItems[]> {
         name: r.name,
         category: "급식",
         description: r.description,
-        image_path: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",
+        image_path: r.image_path,
         items: r.ingredients.map((ing, idx) => ({
           id: `${r.id}-${idx}`,
           ingredient_name: ing.product_name,
@@ -77,7 +77,7 @@ export async function getRecipeWithItems(
         name: recipe.name,
         category: "급식",
         description: recipe.description,
-        image_path: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",
+        image_path: recipe.image_path,
         items: recipe.ingredients.map((ing, idx) => ({
           id: `${recipe.id}-${idx}`,
           ingredient_name: ing.product_name,
