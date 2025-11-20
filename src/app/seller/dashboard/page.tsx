@@ -158,7 +158,7 @@ export default function SellerDashboardPage() {
           <CardTitle>빠른 작업</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <a href="/seller/products" className="p-4 border border-border rounded-lg hover:bg-bg-subtle transition-colors text-left block">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -197,6 +197,21 @@ export default function SellerDashboardPage() {
                 <div>
                   <p className="font-semibold text-text">매출 통계</p>
                   <p className="text-xs text-text-secondary">상세 분석 보기</p>
+                </div>
+              </div>
+            </a>
+
+            <a href="/seller/delivery" className="p-4 border border-border rounded-lg hover:bg-bg-subtle transition-colors text-left block">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-semibold text-text">배송 설정</p>
+                  <p className="text-xs text-text-secondary">지역 및 비용 관리</p>
                 </div>
               </div>
             </a>

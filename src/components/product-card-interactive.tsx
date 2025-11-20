@@ -156,13 +156,18 @@ const ProductCardInteractive = React.forwardRef<HTMLDivElement, ProductCardInter
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-wrap gap-2">
             {product.isLowestPrice && (
-              <Badge
-                variant="danger"
-                size="sm"
-                className="bg-primary text-white border-0 font-bold shadow-sm"
-              >
-                최저가
-              </Badge>
+              <div className="group/tooltip relative z-20">
+                <Badge
+                  variant="danger"
+                  size="sm"
+                  className="bg-primary text-white border-0 font-bold shadow-sm cursor-help"
+                >
+                  최저가
+                </Badge>
+                <div className="absolute left-0 top-full mt-2 hidden group-hover/tooltip:block w-48 p-2 bg-gray-900/90 text-white text-xs rounded shadow-lg backdrop-blur-sm animate-in fade-in zoom-in-95 duration-200">
+                  동일 상품군 중 가장 저렴한 상품입니다.
+                </div>
+              </div>
             )}
             {product.badge && (
               <Badge variant="default" size="sm" className="shadow-sm">

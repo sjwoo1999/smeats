@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 import { cn } from "@/lib/cn";
 import { useCart } from "./cart-provider";
 import { useDemo } from "./demo-provider";
@@ -147,7 +148,7 @@ export function Navigation() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { items } = useCart();
-  const { persona } = useDemo();
+  const { persona, isDemo } = useDemo();
 
   // Select nav links based on persona
   const navLinks =
@@ -169,12 +170,19 @@ export function Navigation() {
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link
-            href={logoHref}
-            className="text-xl font-bold text-primary hover:text-primary-hover transition-colors"
-          >
-            SMEats
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href={logoHref}
+              className="text-xl font-bold text-primary hover:text-primary-hover transition-colors"
+            >
+              SMEats
+            </Link>
+            {isDemo && (
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-amber-500 text-amber-600 bg-amber-50">
+                DEMO
+              </Badge>
+            )}
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">

@@ -260,9 +260,19 @@ export default function RecipeDetailPage({ params }: { params: { id: string } })
                             필요량: {item.quantity_needed.toFixed(1)} {item.unit}
                           </div>
                         </div>
-                        <Badge variant="warning" size="sm">
-                          재고 없음
-                        </Badge>
+                        <div className="flex flex-col items-end gap-2">
+                          <Badge variant="warning" size="sm">
+                            재고 없음
+                          </Badge>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-xs h-7"
+                            onClick={() => router.push(`/products?search=${item.ingredient_name}`)}
+                          >
+                            대체 상품 찾기
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -291,7 +301,7 @@ export default function RecipeDetailPage({ params }: { params: { id: string } })
                               (sum, item) =>
                                 sum +
                                 (item.matched_product?.price || 0) *
-                                  Math.ceil(item.quantity_needed),
+                                Math.ceil(item.quantity_needed),
                               0
                             )
                           )}
@@ -303,7 +313,7 @@ export default function RecipeDetailPage({ params }: { params: { id: string } })
                               (sum, item) =>
                                 sum +
                                 (item.matched_product?.price || 0) *
-                                  Math.ceil(item.quantity_needed),
+                                Math.ceil(item.quantity_needed),
                               0
                             ) / servings
                           )}
