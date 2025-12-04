@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +24,7 @@ const MOCK_DATA = {
 };
 
 export default function BetaDashboardPage() {
+    const router = useRouter();
     const [showOnboarding, setShowOnboarding] = useState(true);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
 
@@ -69,27 +71,29 @@ export default function BetaDashboardPage() {
                 </header>
 
                 {/* Revenue Card */}
-                <Card className="border-none shadow-sm bg-white overflow-hidden">
-                    <CardContent className="p-6">
-                        <div className="flex items-center justify-between mb-4">
-                            <span className="text-slate-500 font-medium">오늘 예상 매출</span>
-                            <Badge variant="success" className="bg-green-100 text-green-700 hover:bg-green-200 border-none">
-                                {/* TrendingUp Icon */}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 mr-1">
-                                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-                                    <polyline points="16 7 22 7 22 13" />
-                                </svg>
-                                +{MOCK_DATA.revenueGrowth}%
-                            </Badge>
-                        </div>
-                        <div className="text-4xl font-bold text-slate-900 mb-2">
-                            {formatPrice(MOCK_DATA.revenue)}
-                        </div>
-                        <p className="text-xs text-slate-400">
-                            어제 동시간 대비 125,000원 증가
-                        </p>
-                    </CardContent>
-                </Card>
+                <div onClick={() => router.push("/beta/analytics")} className="cursor-pointer transition-transform active:scale-95">
+                    <Card className="border-none shadow-sm bg-white overflow-hidden hover:shadow-md transition-shadow">
+                        <CardContent className="p-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <span className="text-slate-500 font-medium">오늘 예상 매출</span>
+                                <Badge variant="success" className="bg-green-100 text-green-700 hover:bg-green-200 border-none">
+                                    {/* TrendingUp Icon */}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 mr-1">
+                                        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                                        <polyline points="16 7 22 7 22 13" />
+                                    </svg>
+                                    +{MOCK_DATA.revenueGrowth}%
+                                </Badge>
+                            </div>
+                            <div className="text-4xl font-bold text-slate-900 mb-2">
+                                {formatPrice(MOCK_DATA.revenue)}
+                            </div>
+                            <p className="text-xs text-slate-400">
+                                어제 동시간 대비 125,000원 증가
+                            </p>
+                        </CardContent>
+                    </Card>
+                </div>
 
                 {/* Stock Alert Card */}
                 <Card className="border-l-4 border-l-orange-500 shadow-sm bg-white">
@@ -153,7 +157,10 @@ export default function BetaDashboardPage() {
                                 </div>
                             </div>
 
-                            <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white py-6 text-lg shadow-lg shadow-slate-200">
+                            <Button
+                                className="w-full bg-slate-900 hover:bg-slate-800 text-white py-6 text-lg shadow-lg shadow-slate-200"
+                                onClick={() => router.push("/beta/order/cart")}
+                            >
                                 {/* ShoppingCart Icon */}
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 mr-2">
                                     <circle cx="8" cy="21" r="1" />
@@ -172,8 +179,8 @@ export default function BetaDashboardPage() {
                 <button
                     className="group relative flex items-center justify-center w-16 h-16 bg-orange-600 rounded-full shadow-xl hover:bg-orange-500 hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-orange-300"
                     onClick={() => {
-                        setIsAnalyzing(true);
-                        setTimeout(() => setIsAnalyzing(false), 3000);
+                        // Navigate to receipt verification page
+                        router.push("/beta/receipt/verify");
                     }}
                 >
                     {isAnalyzing ? (
