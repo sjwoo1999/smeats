@@ -119,13 +119,14 @@ async function ProductsList({ searchParams }: { searchParams: SearchParams }) {
                 <Link
                   key={option.value}
                   href={`/products?${params.toString()}`}
-                  className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-                    isActive
-                      ? "bg-primary text-white font-medium"
-                      : "bg-bg-subtle text-text-secondary hover:bg-bg-subtle-hover"
-                  }`}
                 >
-                  {option.label}
+                  <Button
+                    variant={isActive ? "primary" : "ghost"}
+                    size="sm"
+                    className={isActive ? "" : "text-text-secondary hover:text-text"}
+                  >
+                    {option.label}
+                  </Button>
                 </Link>
               );
             })}

@@ -1,6 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { mockAdminStats, mockBuyerOrders, mockSellerOrders } from "@/lib/mock-data";
+import { formatPrice, formatDate } from "@/lib/utils";
+import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
 
@@ -8,21 +11,6 @@ export default function AdminDashboardPage() {
   const stats = mockAdminStats;
   const allOrders = [...mockBuyerOrders, ...mockSellerOrders];
   const recentOrders = allOrders.slice(0, 5);
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("ko-KR", {
-      style: "currency",
-      currency: "KRW",
-    }).format(price);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("ko-KR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -245,47 +233,53 @@ export default function AdminDashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <a href="/admin/products" className="p-4 border border-border rounded-lg hover:bg-bg-subtle transition-colors text-left block">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+            <Link href="/admin/products">
+              <Button variant="outline" className="w-full h-auto p-4 justify-start text-left flex-col items-start gap-2">
+                <div className="flex items-center gap-3 w-full">
+                  <div className="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-text">상품 심사</p>
+                    <p className="text-xs text-text-secondary font-normal">{stats.pendingProducts}개 대기 중</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-text">상품 심사</p>
-                  <p className="text-xs text-text-secondary">{stats.pendingProducts}개 대기 중</p>
-                </div>
-              </div>
-            </a>
+              </Button>
+            </Link>
 
-            <a href="/admin/users" className="p-4 border border-border rounded-lg hover:bg-bg-subtle transition-colors text-left block">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
+            <Link href="/admin/users">
+              <Button variant="outline" className="w-full h-auto p-4 justify-start text-left flex-col items-start gap-2">
+                <div className="flex items-center gap-3 w-full">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-text">사용자 관리</p>
+                    <p className="text-xs text-text-secondary font-normal">전체 {stats.totalUsers}명</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-text">사용자 관리</p>
-                  <p className="text-xs text-text-secondary">전체 {stats.totalUsers}명</p>
-                </div>
-              </div>
-            </a>
+              </Button>
+            </Link>
 
-            <a href="/admin/reports" className="p-4 border border-border rounded-lg hover:bg-bg-subtle transition-colors text-left block">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-info/10 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
+            <Link href="/admin/reports">
+              <Button variant="outline" className="w-full h-auto p-4 justify-start text-left flex-col items-start gap-2">
+                <div className="flex items-center gap-3 w-full">
+                  <div className="w-10 h-10 rounded-full bg-info/10 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-text">통계 보고서</p>
+                    <p className="text-xs text-text-secondary font-normal">상세 분석 보기</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-text">통계 보고서</p>
-                  <p className="text-xs text-text-secondary">상세 분석 보기</p>
-                </div>
-              </div>
-            </a>
+              </Button>
+            </Link>
           </div>
         </CardContent>
       </Card>

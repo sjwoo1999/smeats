@@ -2,25 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { mockSellerOrders } from "@/lib/mock-data";
+import { formatPrice, formatDate } from "@/lib/utils";
 
 export default function SellerOrdersPage() {
   const orders = mockSellerOrders;
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("ko-KR", {
-      style: "currency",
-      currency: "KRW",
-    }).format(price);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("ko-KR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -41,21 +28,21 @@ export default function SellerOrdersPage() {
     switch (status) {
       case "pending":
         return (
-          <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors text-sm">
+          <Button variant="primary" size="sm">
             주문 승인 (데모)
-          </button>
+          </Button>
         );
       case "preparing":
         return (
-          <button className="px-4 py-2 bg-info text-white rounded-lg hover:bg-info/90 transition-colors text-sm">
+          <Button variant="info" size="sm" className="text-white">
             배송 시작 (데모)
-          </button>
+          </Button>
         );
       case "shipped":
         return (
-          <button className="px-4 py-2 bg-success text-white rounded-lg hover:bg-success/90 transition-colors text-sm">
+          <Button variant="success" size="sm" className="text-white">
             배송 완료 (데모)
-          </button>
+          </Button>
         );
       default:
         return null;
@@ -145,9 +132,9 @@ export default function SellerOrdersPage() {
 
               {/* Actions */}
               <div className="pt-3 border-t border-border flex justify-end gap-2">
-                <button className="px-4 py-2 border border-border rounded-lg hover:bg-bg-subtle transition-colors text-sm">
+                <Button variant="outline" size="sm">
                   주문서 출력
-                </button>
+                </Button>
                 {getStatusActions(order.status)}
               </div>
             </CardContent>

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useDemo } from "@/components/demo-provider";
+import { FloatingBetaBanner } from "@/components/floating-beta-banner";
 import { getPersonaIcon, getPersonaDisplayName, getPersonaDescription, type PersonaType } from "@/lib/demo-mode";
 
 export default function Home() {
@@ -103,6 +104,9 @@ export default function Home() {
             </p>
           </div>
         </div>
+
+        {/* Floating Beta Banner */}
+        <FloatingBetaBanner />
       </div>
     );
   }
@@ -144,6 +148,9 @@ export default function Home() {
           </div>
         </Card>
       </section>
+
+      {/* Floating Beta Banner */}
+      <FloatingBetaBanner />
     </div>
   );
 }

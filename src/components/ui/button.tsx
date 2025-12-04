@@ -5,7 +5,14 @@ import { cn } from "@/lib/cn";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
+  variant?:
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "ghost"
+  | "danger"
+  | "success"
+  | "info";
   size?: "sm" | "md" | "lg";
   isLoading?: boolean;
 }
@@ -36,6 +43,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       ghost: "text-text hover:bg-bg-subtle active:bg-bg-muted",
       danger:
         "bg-danger text-white hover:bg-danger/90 active:bg-danger/80",
+      success:
+        "bg-success text-white hover:bg-success/90 active:bg-success/80",
+      info: "bg-info text-white hover:bg-info/90 active:bg-info/80",
     };
 
     const sizeStyles = {
